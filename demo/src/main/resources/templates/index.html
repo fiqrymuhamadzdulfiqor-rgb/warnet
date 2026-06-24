@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>CyberNet Internet Cafe</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- GLOBAL CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* HERO SPECIAL ONLY (biar global CSS tetap dipakai) */
+
+        .hero {
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hero h1 {
+            font-size: 64px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #38bdf8, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 3s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px #38bdf8); }
+            to { filter: drop-shadow(0 0 25px #60a5fa); }
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-top: 15px;
+            color: #cbd5e1;
+            max-width: 600px;
+        }
+
+        .btn-group {
+            margin-top: 30px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: #1e293b;
+            color: #94a3b8;
+            border-top: 1px solid rgba(56,189,248,0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div><b>CyberNet</b></div>
+
+    <div>
+        <a href="/">Home</a>
+        <a href="/reservasi">Reservasi</a>
+        <a href="/login-member">Member</a>
+        <a href="/login">Admin</a>
+    </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+
+    <h1>CYBERNET INTERNET CAFE</h1>
+
+    <p>
+        Warnet Gaming Modern dengan Internet Super Cepat, Stabil, dan Siap untuk Gaming & Produktivitas
+    </p>
+
+    <div class="btn-group">
+
+        <a href="/reservasi" class="btn">
+            Reservasi Sekarang
+        </a>
+
+        <a href="/login-member" class="btn btn-outline">
+            Login Member
+        </a>
+
+        <a href="/login" class="btn btn-outline">
+            Login Admin
+        </a>
+
+    </div>
+
+</section>
+
+<!-- INFO -->
+<section class="container">
+
+    <div class="card">
+        <h2>20+</h2>
+        <p>PC Gaming</p>
+    </div>
+
+    <div class="card">
+        <h2>100 Mbps</h2>
+        <p>Internet Stabil</p>
+    </div>
+
+    <div class="card">
+        <h2>Rp 5K</h2>
+        <p>Per Jam</p>
+    </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+    © 2026 CyberNet Internet Cafe - All Rights Reserved
+</footer>
+
+</body>
+</html>

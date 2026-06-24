@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Pilih Komputer</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Inter',sans-serif;
+        }
+
+        body{
+            min-height:100vh;
+            background: radial-gradient(circle at top,#1e293b,#0f172a);
+            color:white;
+            padding:40px;
+        }
+
+        .container{
+            max-width:900px;
+            margin:auto;
+        }
+
+        h1{
+            text-align:center;
+            margin-bottom:30px;
+            color:#38bdf8;
+        }
+
+        .card{
+            background:rgba(30,41,59,0.7);
+            padding:25px;
+            border-radius:15px;
+            margin-bottom:20px;
+        }
+
+        select,input{
+            width:100%;
+            padding:12px;
+            margin-top:10px;
+            border:none;
+            border-radius:10px;
+        }
+
+        button{
+            width:100%;
+            margin-top:20px;
+            padding:12px;
+            border:none;
+            border-radius:10px;
+            background:#38bdf8;
+            color:black;
+            font-weight:bold;
+            cursor:pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Pilih Komputer</h1>
+
+    <div class="card">
+
+        <form action="/checkout" method="post">
+
+            <label>Komputer</label>
+
+            <select name="komputerId" required>
+
+                <option value="">-- Pilih Komputer --</option>
+
+                <option
+                        th:each="k : ${komputerList}"
+                        th:value="${k.id}"
+                        th:text="${k.namaKomputer + ' | Rp ' + k.tarifPerJam}">
+                </option>
+
+            </select>
+
+            <label>Lama Pemakaian (Jam)</label>
+
+            <input
+                    type="number"
+                    name="jam"
+                    min="1"
+                    required>
+
+            <button type="submit">
+                Lanjut ke Pembayaran
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

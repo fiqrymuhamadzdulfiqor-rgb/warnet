@@ -1,0 +1,170 @@
+/* =========================
+   GLOBAL STYLE CYBER CAFE
+   ========================= */
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #111827);
+    color: #e2e8f0;
+}
+
+/* =========================
+   NAVBAR
+   ========================= */
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: rgba(30, 41, 59, 0.9);
+    border-bottom: 1px solid #38bdf8;
+    backdrop-filter: blur(10px);
+}
+
+.navbar a {
+    color: #e2e8f0;
+    margin-left: 15px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.navbar a:hover {
+    color: #38bdf8;
+}
+
+/* =========================
+   CONTAINER
+   ========================= */
+
+.container {
+    width: 90%;
+    margin: auto;
+    padding: 30px;
+}
+
+/* =========================
+   CARD
+   ========================= */
+
+.card {
+    background: rgba(30, 41, 59, 0.85);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 15px 0;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    border-color: #38bdf8;
+}
+
+/* =========================
+   BUTTON
+   ========================= */
+
+.btn {
+    background: #38bdf8;
+    color: #0f172a;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+.btn:hover {
+    background: #0ea5e9;
+}
+
+/* secondary button */
+.btn-outline {
+    border: 1px solid #38bdf8;
+    color: #38bdf8;
+    background: transparent;
+}
+
+.btn-outline:hover {
+    background: #38bdf8;
+    color: #0f172a;
+}
+
+/* =========================
+   TABLE
+   ========================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(30, 41, 59, 0.85);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #334155;
+}
+
+th {
+    background: #1e293b;
+    color: #38bdf8;
+}
+
+tr:hover {
+    background: rgba(56, 189, 248, 0.1);
+}
+
+/* =========================
+   INPUT FORM
+   ========================= */
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background: #1e293b;
+    color: white;
+}
+
+label {
+    font-weight: 500;
+}
+
+/* =========================
+   LOGIN BOX
+   ========================= */
+
+.login-box {
+    width: 350px;
+    margin: 80px auto;
+    padding: 30px;
+    background: rgba(30, 41, 59, 0.9);
+    border-radius: 12px;
+    border: 1px solid #38bdf8;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    color: #94a3b8;
+    font-size: 14px;
+}

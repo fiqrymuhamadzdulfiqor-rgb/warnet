@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard Admin</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Inter', sans-serif;
+        }
+
+        body{
+            background: radial-gradient(circle at top, #1e293b, #0f172a);
+            color:white;
+            min-height:100vh;
+        }
+
+        /* NAV TOP */
+        .header{
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            padding:20px;
+            text-align:center;
+            border-bottom:1px solid rgba(56,189,248,0.2);
+        }
+
+        .header h1{
+            color:#38bdf8;
+            font-size:24px;
+            letter-spacing:1px;
+        }
+
+        /* CONTAINER */
+        .container{
+            width:90%;
+            margin:auto;
+            margin-top:60px;
+        }
+
+        /* GRID CARDS */
+        .cards{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+            gap:25px;
+        }
+
+        .card{
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            padding:30px;
+            border-radius:14px;
+            text-align:center;
+            border:1px solid rgba(56,189,248,0.15);
+            transition:0.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-8px);
+            border-color:#38bdf8;
+            box-shadow:0 10px 30px rgba(56,189,248,0.2);
+        }
+
+        .card h2{
+            margin-bottom:10px;
+            font-size:22px;
+        }
+
+        .card p{
+            color:#cbd5e1;
+            margin-bottom:20px;
+            font-size:14px;
+        }
+
+        /* BUTTON */
+        .btn{
+            display:inline-block;
+            padding:10px 18px;
+            background:linear-gradient(90deg, #38bdf8, #0ea5e9);
+            color:#0f172a;
+            text-decoration:none;
+            border-radius:10px;
+            font-weight:600;
+            transition:0.3s;
+        }
+
+        .btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 10px 20px rgba(56,189,248,0.3);
+        }
+
+        /* BACK BUTTON */
+        .back{
+            text-align:center;
+            margin-top:50px;
+        }
+
+        .back a{
+            background:transparent;
+            border:1px solid #38bdf8;
+            color:#38bdf8;
+        }
+
+        .back a:hover{
+            background:#38bdf8;
+            color:#0f172a;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <h1>Dashboard Admin CyberNet</h1>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+
+    <div class="cards">
+
+        <div class="card">
+            <h2>👤 Pelanggan</h2>
+            <p>Kelola data pelanggan warnet</p>
+            <a href="/pelanggan-page" class="btn">Kelola</a>
+        </div>
+
+        <div class="card">
+            <h2>🖥 Komputer</h2>
+            <p>Kelola komputer yang tersedia</p>
+            <a href="/komputer-page" class="btn">Kelola</a>
+        </div>
+
+        <div class="card">
+            <h2>💳 Transaksi</h2>
+            <p>Kelola transaksi pelanggan</p>
+            <a href="/transaksi-page" class="btn">Kelola</a>
+        </div>
+
+        <div class="card">
+            <h2>💰 Pembayaran</h2>
+            <p>Kelola pembayaran pelanggan</p>
+            <a href="/pembayaran-page" class="btn">Kelola</a>
+        </div>
+
+    </div>
+
+    <div class="back">
+        <a href="/" class="btn">← Kembali ke Home</a>
+    </div>
+
+</div>
+
+</body>
+</html>

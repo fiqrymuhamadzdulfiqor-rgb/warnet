@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registrasi CyberNet</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Inter', sans-serif;
+        }
+
+        body{
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background: radial-gradient(circle at top, #1e293b, #0f172a);
+            color:white;
+            padding:20px;
+        }
+
+        .container{
+            width:420px;
+            padding:30px;
+            border-radius:16px;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border:1px solid rgba(56,189,248,0.15);
+            box-shadow:0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        h2{
+            text-align:center;
+            margin-bottom:20px;
+            color:#38bdf8;
+            font-size:28px;
+        }
+
+        label{
+            display:block;
+            margin-top:12px;
+            margin-bottom:6px;
+            color:#cbd5e1;
+            font-weight:500;
+        }
+
+        input, select{
+            width:100%;
+            padding:12px;
+            border:none;
+            border-radius:10px;
+            background: rgba(255,255,255,0.08);
+            color:white;
+            outline:none;
+        }
+
+        select option{
+            color:black;
+        }
+
+        button{
+            width:100%;
+            margin-top:20px;
+            padding:12px;
+            border:none;
+            border-radius:10px;
+            background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+            color:#0f172a;
+            font-weight:700;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        button:hover{
+            transform:translateY(-2px);
+            box-shadow:0 10px 20px rgba(56,189,248,0.3);
+        }
+
+        .back{
+            display:block;
+            text-align:center;
+            margin-top:15px;
+            color:#94a3b8;
+            text-decoration:none;
+        }
+
+        .back:hover{
+            color:#38bdf8;
+        }
+
+        #memberFields{
+            margin-top:15px;
+            padding:15px;
+            border-radius:12px;
+            background: rgba(255,255,255,0.05);
+            display:none;
+            animation: fade 0.3s ease-in-out;
+        }
+
+        @keyframes fade{
+            from{opacity:0; transform:translateY(-10px);}
+            to{opacity:1; transform:translateY(0);}
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Registrasi CyberNet</h2>
+
+    <form action="/reservasi" method="post">
+
+        <label>Nama</label>
+        <input type="text" name="nama" required>
+
+        <label>No HP</label>
+        <input type="text" name="noHp" required>
+
+        <label>Status Pengguna</label>
+
+        <select name="status" id="status" onchange="toggleMemberFields()">
+
+            <option value="UMUM">Umum</option>
+            <option value="MEMBER">Member</option>
+
+        </select>
+
+        <div id="memberFields">
+
+            <label>Username</label>
+            <input type="text" name="username">
+
+            <label>Password</label>
+            <input type="password" name="password">
+
+        </div>
+
+        <button type="submit">Daftar</button>
+
+    </form>
+
+    <a href="/" class="back">← Kembali ke Home</a>
+
+</div>
+
+<script>
+
+function toggleMemberFields(){
+
+    let status = document.getElementById("status").value;
+    let memberFields = document.getElementById("memberFields");
+
+    if(status === "MEMBER"){
+        memberFields.style.display = "block";
+    } else {
+        memberFields.style.display = "none";
+    }
+}
+
+window.onload = toggleMemberFields;
+
+</script>
+
+</body>
+</html>
