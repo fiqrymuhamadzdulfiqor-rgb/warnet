@@ -7,57 +7,71 @@
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
         body {
             min-height:100vh; display:flex; justify-content:center; align-items:center;
-            background: radial-gradient(circle at top,#1e293b,#0f172a); color:white;
+            background: radial-gradient(circle at center, #0f172a, #020617); 
+            color:white; padding: 20px;
         }
         .card {
-            width:500px; background:rgba(30,41,59,0.7); backdrop-filter:blur(10px);
-            padding:35px; border-radius:16px; border:1px solid rgba(56,189,248,0.15);
-            box-shadow:0 20px 40px rgba(0,0,0,0.4); text-align:center;
+            width:100%; max-width:480px; 
+            background: rgba(30, 41, 59, 0.4); 
+            backdrop-filter: blur(20px);
+            padding:40px; border-radius:24px; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align:center;
+            animation: fadeIn 0.6s ease-out;
         }
-        .success { font-size:60px; margin-bottom:10px; }
-        h1 { color:#22c55e; margin-bottom:25px; font-size:24px; }
-        .info { text-align:left; background:rgba(15,23,42,0.6); padding:20px; border-radius:12px; margin-bottom:25px; }
-        .info p { margin:10px 0; font-size:16px; }
-        .label { color:#38bdf8; font-weight:600; display:inline-block; width:110px; }
-        .btn {
-            display:inline-block; margin-top:10px; padding:12px 24px;
-            background:linear-gradient(90deg, #38bdf8, #0ea5e9); color:#0f172a;
-            text-decoration:none; border-radius:10px; font-weight:700;
+        @keyframes fadeIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+        
+        .success-icon { font-size:64px; margin-bottom:15px; }
+        h1 { color:#22c55e; margin-bottom:25px; font-size:26px; letter-spacing: -0.5px; }
+        
+        .info { 
+            text-align:left; background: rgba(15, 23, 42, 0.5); 
+            padding:24px; border-radius:16px; margin-bottom:25px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        .btn:hover { opacity:0.9; }
+        .info p { display: flex; justify-content: space-between; margin: 12px 0; font-size:15px; }
+        .label { color:#94a3b8; }
+        .value { color: #f1f5f9; font-weight: 600; }
+        
         .kode-akses-box {
-            margin-top: 20px; padding: 15px; background: rgba(34, 197, 94, 0.1);
-            border: 1px dashed #22c55e; border-radius: 8px; text-align: center;
+            margin-top: 25px; padding: 20px; 
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px dashed #22c55e; border-radius: 12px;
         }
+        
+        .btn {
+            display:block; width: 100%; padding:14px;
+            background: #38bdf8; color:#0f172a;
+            text-decoration:none; border-radius:12px; font-weight:700;
+            transition: 0.3s;
+        }
+        .btn:hover { background: #0ea5e9; transform: scale(1.02); }
     </style>
 </head>
 <body>
 
 <div class="card">
-
-    <div class="success">✅</div>
+    <div class="success-icon">✅</div>
     <h1>Pembayaran Berhasil</h1>
 
     <div class="info">
-        <p><span class="label">Nama</span> : <span th:text="${transaksi.pelanggan.nama}"></span></p>
-        <p><span class="label">Komputer</span> : <span th:text="${transaksi.komputer.namaKomputer}"></span></p>
-        <p><span class="label">Durasi</span> : <span th:text="${transaksi.jam} + ' Jam'"></span></p>
-        <p><span class="label">Total Bayar</span> : Rp <span th:text="${transaksi.total}"></span></p>
+        <p><span class="label">Nama Pelanggan</span> <span class="value" th:text="${transaksi.pelanggan.nama}"></span></p>
+        <p><span class="label">Komputer</span> <span class="value" th:text="${transaksi.komputer.namaKomputer}"></span></p>
+        <p><span class="label">Durasi</span> <span class="value" th:text="${transaksi.jam} + ' Jam'"></span></p>
+        
+        <p><span class="label">Total Bayar</span> 
+           <span class="value" th:text="'Rp ' + ${#numbers.formatInteger(transaksi.total, 0, 'POINT')}"></span>
+        </p>
 
         <div th:if="${transaksi.pelanggan.status == 'UMUM'}" class="kode-akses-box">
-            <p style="color: #94a3b8; font-size: 14px; margin-bottom: 5px;">Gunakan kode di bawah ini untuk login PC:</p>
-            <span style="font-size: 28px; font-weight: bold; color: #22c55e; letter-spacing: 4px;" th:text="${transaksi.kodeAkses}"></span>
-        </div>
-
-        <div th:if="${transaksi.pelanggan.status == 'MEMBER'}" style="margin-top: 15px; text-align: center;">
-            <p style="color: #22c55e; font-weight: bold; font-size: 15px;">🎉 Diskon Member 15% Berhasil!</p>
-            <p style="color: #38bdf8; font-size: 13px; margin-top: 5px;">(PC langsung aktif, silakan menuju meja Anda)</p>
+            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 8px;">KODE AKSES LOGIN PC</p>
+            <span style="font-size: 32px; font-weight: 800; color: #22c55e; letter-spacing: 6px;" th:text="${transaksi.kodeAkses}"></span>
         </div>
     </div>
 
     <a th:if="${session.user != null}" href="/member-dashboard" class="btn">Kembali ke Dashboard</a>
     <a th:if="${session.user == null}" href="/" class="btn">Kembali ke Home</a>
-
 </div>
 
 </body>

@@ -38,24 +38,18 @@ public class TransaksiService {
         transaksi.setKomputer(komputer);
         transaksi.setPelanggan(pelanggan);
 
-        // 1. Hitung Harga Dasar
+        // Set tarif berdasarkan harga komputer yang dipilih
+        transaksi.setTarif(komputer.getTarifPerJam());
+
+        // 1. Hitung Harga Dasar Murni (Tanpa Diskon!)
         double hargaDasar = transaksi.getTarif() * transaksi.getJam();
+        transaksi.setTotal(hargaDasar); // Semua bayar harga normal
 
-        // 2. Pemisahan Hak Akses Pelanggan
+        // 2. Pemisahan Hak Akses Pelanggan (Hanya untuk Kode Akses)
         if ("MEMBER".equalsIgnoreCase(pelanggan.getStatus())) {
-            // Benefit Member: Diskon 15%
-            transaksi.setTotal(hargaDasar * 0.85);
-
-            // Benefit Member: Tambah 10 Poin per Jam
-            int tambahanPoint = transaksi.getJam() * 10;
-            pelanggan.setPoint(pelanggan.getPoint() + tambahanPoint);
-            pelangganService.save(pelanggan);
-
+            // Poin TIDAK LAGI ditambah di sini. Sudah dipindah ke Pembayaran.
             transaksi.setKodeAkses("MEMBER-LOGIN"); 
         } else {
-            // Pengguna Umum: Bayar Harga Normal
-            transaksi.setTotal(hargaDasar);
-
             // Pengguna Umum: Generate Kode Akses Acak 6 Karakter
             String kodeUnik = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
             transaksi.setKodeAkses(kodeUnik);

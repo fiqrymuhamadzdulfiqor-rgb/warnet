@@ -1,107 +1,79 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Pilih Komputer</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih PC - CyberNet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: #0f172a; color: white; padding: 50px 20px; min-height: 100vh; }
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:'Inter',sans-serif;
+        .bg-glow { position: fixed; top: -20%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%); z-index: -1; filter: blur(50px); }
+
+        .container { max-width: 1100px; margin: auto; }
+        
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-size: 36px; font-weight: 900; color: white; margin-bottom: 10px; }
+        .header p { color: #94a3b8; font-size: 16px; }
+
+        .pc-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;
         }
 
-        body{
-            min-height:100vh;
-            background: radial-gradient(circle at top,#1e293b,#0f172a);
-            color:white;
-            padding:40px;
+        .pc-card {
+            background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px; padding: 25px; text-align: center; transition: 0.3s;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
+        .pc-card:hover { border-color: #38bdf8; transform: translateY(-5px); background: rgba(30, 41, 59, 0.7); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
 
-        .container{
-            max-width:900px;
-            margin:auto;
+        .pc-icon { font-size: 45px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(56,189,248,0.3)); }
+        .pc-name { font-size: 22px; font-weight: 800; color: white; margin-bottom: 5px; }
+        .pc-price { color: #38bdf8; font-weight: 700; font-size: 16px; margin-bottom: 20px; }
+
+        /* Badge Status */
+        .status { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; margin-bottom: 15px; }
+        .status.tersedia { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+        .status.terpakai { background: rgba(244, 63, 94, 0.2); color: #f87171; border: 1px solid rgba(244, 63, 94, 0.4); }
+
+        .btn-pilih {
+            display: block; width: 100%; padding: 12px; background: rgba(56,189,248,0.1);
+            color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 10px; font-weight: 700; text-decoration: none; transition: 0.2s;
         }
-
-        h1{
-            text-align:center;
-            margin-bottom:30px;
-            color:#38bdf8;
+        .btn-pilih:hover { background: #38bdf8; color: #0f172a; }
+        
+        .btn-disabled {
+            display: block; width: 100%; padding: 12px; background: rgba(255,255,255,0.05);
+            color: #64748b; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; font-weight: 700; text-decoration: none; cursor: not-allowed;
         }
-
-        .card{
-            background:rgba(30,41,59,0.7);
-            padding:25px;
-            border-radius:15px;
-            margin-bottom:20px;
-        }
-
-        select,input{
-            width:100%;
-            padding:12px;
-            margin-top:10px;
-            border:none;
-            border-radius:10px;
-        }
-
-        button{
-            width:100%;
-            margin-top:20px;
-            padding:12px;
-            border:none;
-            border-radius:10px;
-            background:#38bdf8;
-            color:black;
-            font-weight:bold;
-            cursor:pointer;
-        }
-
     </style>
 </head>
-
 <body>
 
+<div class="bg-glow"></div>
+
 <div class="container">
-
-    <h1>Pilih Komputer</h1>
-
-    <div class="card">
-
-        <form action="/checkout" method="post">
-
-            <label>Komputer</label>
-
-            <select name="komputerId" required>
-
-                <option value="">-- Pilih Komputer --</option>
-
-                <option
-                        th:each="k : ${komputerList}"
-                        th:value="${k.id}"
-                        th:text="${k.namaKomputer + ' | Rp ' + k.tarifPerJam}">
-                </option>
-
-            </select>
-
-            <label>Lama Pemakaian (Jam)</label>
-
-            <input
-                    type="number"
-                    name="jam"
-                    min="1"
-                    required>
-
-            <button type="submit">
-                Lanjut ke Pembayaran
-            </button>
-
-        </form>
-
+    <div class="header">
+        <h1>🖥️ Pilih PC Pilihanmu</h1>
+        <p>Silakan pilih unit komputer yang tersedia untuk mulai bermain.</p>
     </div>
 
+    <div class="pc-grid">
+        <div th:each="k : ${komputerList}" class="pc-card">
+            <div class="pc-icon">🖥️</div>
+            
+            <div th:if="${k.status == 'Tersedia'}" class="status tersedia">✅ Ready</div>
+            <div th:if="${k.status == 'Terpakai'}" class="status terpakai">❌ In Use</div>
+
+            <h3 class="pc-name" th:text="${k.namaKomputer}">PC-01 (VIP)</h3>
+            <p class="pc-price" th:text="'Rp ' + ${#numbers.formatInteger(k.tarifPerJam, 0, 'POINT')} + ' / jam'"></p>
+            
+            <a th:if="${k.status == 'Tersedia'}" th:href="@{/simpan-komputer/{id}(id=${k.id})}" class="btn-pilih">Pilih PC Ini</a>
+            
+            <span th:if="${k.status == 'Terpakai'}" class="btn-disabled">Sedang Digunakan</span>
+        </div>
+    </div>
 </div>
 
 </body>

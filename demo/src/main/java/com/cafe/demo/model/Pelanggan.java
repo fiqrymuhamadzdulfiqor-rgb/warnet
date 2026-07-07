@@ -21,7 +21,7 @@ public class Pelanggan {
     private String password;
 
     // POINT MEMBER
-    private int point = 0;
+    private Integer point = 0;
 
     public Pelanggan() {
     }

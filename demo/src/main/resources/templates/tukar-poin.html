@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tukar Poin - CyberNet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Inter',sans-serif;
+        }
+
+        body{
+            min-height:100vh;
+            background: radial-gradient(circle at top,#1e293b,#0f172a);
+            color:white;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h2 {
+            color: #38bdf8;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .poin-badge {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            border: 1px solid #38bdf8;
+        }
+
+        /* Pesan Error jika poin tidak cukup */
+        .error-msg {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid #ef4444;
+        }
+
+        .grid-hadiah {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .card-hadiah {
+            background: rgba(30,41,59,0.7);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #334155;
+            transition: transform 0.2s;
+        }
+
+        .card-hadiah:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+        }
+
+        .card-hadiah h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .card-hadiah p {
+            color: #94a3b8;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .card-hadiah .harga {
+            font-size: 20px;
+            font-weight: bold;
+            color: #facc15; /* Warna kuning emas */
+            margin-bottom: 20px;
+        }
+
+        button.btn-tukar {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #38bdf8;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button.btn-tukar:hover {
+            background: #0284c7;
+            color: white;
+        }
+
+        .btn-kembali {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .btn-kembali:hover {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div class="header">
+        <h2>🎁 Tukar Poin Reward</h2>
+        <div class="poin-badge">
+            Sisa Poin: <span th:text="${user.point}">0</span> PTS
+        </div>
+    </div>
+
+    <div th:if="${error}" class="error-msg">
+        <b th:text="${error}"></b>
+    </div>
+
+    <div class="grid-hadiah">
+        
+        <div class="card-hadiah">
+            <form action="/proses-tukar-poin" method="post">
+                <h3>Es Teh Manis</h3>
+                <p>Segarkan harimu saat push rank!</p>
+                <div class="harga">20 PTS</div>
+                
+                <input type="hidden" name="hadiah" value="Es Teh Manis">
+                <input type="hidden" name="hargaPoin" value="20">
+                
+                <button type="submit" class="btn-tukar">Tukar Sekarang</button>
+            </form>
+        </div>
+
+        <div class="card-hadiah">
+            <form action="/proses-tukar-poin" method="post">
+                <h3>Indomie Goreng</h3>
+                <p>Penyelamat perut lapar gamer.</p>
+                <div class="harga">50 PTS</div>
+                
+                <input type="hidden" name="hadiah" value="Indomie Goreng Telur">
+                <input type="hidden" name="hargaPoin" value="50">
+                
+                <button type="submit" class="btn-tukar">Tukar Sekarang</button>
+            </form>
+        </div>
+
+        <div class="card-hadiah">
+            <form action="/proses-tukar-poin" method="post">
+                <h3>Gratis 1 Jam PC</h3>
+                <p>Tambah waktu mainmu gratis!</p>
+                <div class="harga">100 PTS</div>
+                
+                <input type="hidden" name="hadiah" value="Gratis 1 Jam Main">
+                <input type="hidden" name="hargaPoin" value="100">
+                
+                <button type="submit" class="btn-tukar">Tukar Sekarang</button>
+            </form>
+        </div>
+
+    </div>
+
+    <a href="/member-dashboard" class="btn-kembali">← Kembali ke Dashboard</a>
+
+</div>
+
+</body>
+</html>

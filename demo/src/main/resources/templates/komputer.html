@@ -2,257 +2,114 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Komputer</title>
-
+    <title>Manajemen PC - CyberNet Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
     <style>
-
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:'Inter', sans-serif;
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
+        body {
+            min-height:100vh; background: radial-gradient(circle at top, #1e293b, #0f172a); color:white; padding:30px;
         }
-
-        body{
-            min-height:100vh;
-            background: radial-gradient(circle at top, #1e293b, #0f172a);
-            color:white;
-            padding:30px;
+        .container {
+            max-width:1100px; margin:auto; background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px);
+            padding:30px; border-radius:18px; border:1px solid rgba(56,189,248,0.15); box-shadow:0 20px 40px rgba(0,0,0,0.4);
         }
-
-        .container{
-            max-width:1100px;
-            margin:auto;
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(10px);
-            padding:30px;
-            border-radius:18px;
-            border:1px solid rgba(56,189,248,0.15);
-            box-shadow:0 20px 40px rgba(0,0,0,0.4);
+        .header-title {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-
-        h1{
-            text-align:center;
-            margin-bottom:25px;
-            font-size:36px;
-            background: linear-gradient(90deg, #38bdf8, #60a5fa);
-            -webkit-background-clip:text;
-            -webkit-text-fill-color:transparent;
+        .header-title h1 { color: #38bdf8; font-size: 24px; }
+        .back-btn {
+            color: #94a3b8; text-decoration: none; font-weight: 600; padding: 8px 16px;
+            border-radius: 8px; border: 1px solid #94a3b8; transition: 0.3s;
         }
+        .back-btn:hover { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
 
-        /* FORM */
-        form{
-            background: rgba(255,255,255,0.05);
-            padding:25px;
-            border-radius:14px;
-            margin-bottom:30px;
-            border:1px solid rgba(255,255,255,0.08);
+        /* FORM STYLE */
+        form {
+            display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 15px; align-items: center;
+            background: rgba(15, 23, 42, 0.4); padding: 20px; border-radius: 12px; margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
-
-        input, select{
-            width:100%;
-            padding:14px;
-            margin-top:12px;
-            border:none;
-            border-radius:10px;
-            background: rgba(255,255,255,0.08);
-            color:white;
-            outline:none;
+        input {
+            width:100%; padding:12px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(56,189,248,0.2);
+            border-radius:8px; color: white; font-size: 14px;
         }
-
-        select option{
-            color:black;
+        input:focus { border-color: #38bdf8; outline: none; }
+        button {
+            padding:12px 24px; background:#38bdf8; color:#0f172a; font-weight:bold;
+            border:none; border-radius:8px; cursor:pointer; transition: 0.2s;
         }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        input::placeholder{
-            color:#cbd5e1;
+        /* TABLE STYLE */
+        table { width:100%; border-collapse:collapse; }
+        th { background: rgba(56,189,248,0.1); color: #38bdf8; padding: 15px; text-align: left; font-size: 14px;}
+        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e2e8f0; font-size: 14px;}
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .status-tersedia { color: #4ade80; font-weight: 600; }
+        .status-dipakai { color: #f43f5e; font-weight: 600; }
+
+        /* ACTIONS ACTION BUTTONS */
+        .action-link { text-decoration: none; font-size: 13px; font-weight: 600; margin-right: 10px; }
+        .edit { color: #38bdf8; }
+        .edit:hover { text-decoration: underline; }
+        .hapus { color: #fb7185; }
+        .hapus:hover { text-decoration: underline; }
+        .btn-stop {
+            background: #e11d48; color: white; padding: 6px 12px; border-radius: 6px;
+            text-decoration: none; font-size: 12px; font-weight: bold; display: inline-block; transition: 0.2s;
         }
-
-        button{
-            margin-top:18px;
-            width:100%;
-            padding:14px;
-            border:none;
-            border-radius:10px;
-            background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-            color:#0f172a;
-            font-weight:700;
-            cursor:pointer;
-            transition:0.3s;
-        }
-
-        button:hover{
-            transform:translateY(-2px);
-            box-shadow:0 10px 20px rgba(56,189,248,0.3);
-        }
-
-        /* TABLE */
-        table{
-            width:100%;
-            border-collapse:collapse;
-            overflow:hidden;
-            border-radius:14px;
-            background: rgba(255,255,255,0.05);
-        }
-
-        th, td{
-            padding:14px;
-            text-align:center;
-        }
-
-        th{
-            background: rgba(56,189,248,0.2);
-            color:#38bdf8;
-        }
-
-        tr{
-            transition:0.2s;
-        }
-
-        tr:hover{
-            background: rgba(255,255,255,0.05);
-        }
-
-        /* STATUS */
-        .status-tersedia{
-            color:#22c55e;
-            font-weight:700;
-        }
-
-        .status-dipakai{
-            color:#ef4444;
-            font-weight:700;
-        }
-
-        /* ACTION */
-        a{
-            text-decoration:none;
-            font-weight:600;
-            margin:5px;
-        }
-
-        .edit{
-            color:#38bdf8;
-        }
-
-        .hapus{
-            color:#fb7185;
-        }
-
-        /* BACK */
-        .kembali{
-            display:inline-block;
-            margin-top:25px;
-            padding:12px 18px;
-            border-radius:10px;
-            background:transparent;
-            border:1px solid #38bdf8;
-            color:#38bdf8;
-            font-weight:600;
-            transition:0.3s;
-        }
-
-        .kembali:hover{
-            background:#38bdf8;
-            color:#0f172a;
-        }
-
+        .btn-stop:hover { background: #be123c; box-shadow: 0 0 10px rgba(225,29,72,0.4); }
     </style>
 </head>
-
 <body>
 
 <div class="container">
 
-    <h1>💻 Data Komputer</h1>
+    <div class="header-title">
+        <h1>🖥️ Manajemen Komputer (Billing)</h1>
+        <a href="/admin" class="back-btn">← Kembali ke Dashboard</a>
+    </div>
 
     <form action="/save-komputer" method="post">
-
         <input type="hidden" name="id" th:value="${komputer.id}">
+        <input type="hidden" name="status" th:value="${komputer.status != null ? komputer.status : 'Tersedia'}">
 
-        <input type="text"
-               name="namaKomputer"
-               placeholder="Nama Komputer"
-               th:value="${komputer.namaKomputer}"
-               required>
-
-        <select name="status" required>
-
-            <option value="">-- Pilih Status --</option>
-
-            <option value="Tersedia"
-                    th:selected="${komputer.status == 'Tersedia'}">
-                Tersedia
-            </option>
-
-            <option value="Dipakai"
-                    th:selected="${komputer.status == 'Dipakai'}">
-                Dipakai
-            </option>
-
-        </select>
-
-        <input type="number"
-               name="tarifPerJam"
-               placeholder="Tarif Per Jam"
-               th:value="${komputer.tarifPerJam}"
-               required>
-
-        <button type="submit">💾 Simpan Data</button>
-
+        <input type="text" name="namaKomputer" placeholder="Nama Komputer (Contoh: PC-01)" th:value="${komputer.namaKomputer}" required>
+        <input type="number" name="tarifPerJam" placeholder="Tarif Per Jam (Rp)" th:value="${komputer.tarifPerJam}" required>
+        
+        <button type="submit">💾 Simpan PC</button>
     </form>
 
     <table>
-
         <tr>
             <th>ID</th>
             <th>Nama Komputer</th>
-            <th>Status</th>
+            <th>Status PC</th>
             <th>Tarif / Jam</th>
-            <th>Aksi</th>
+            <th>Aksi Kontrol</th>
         </tr>
 
-        <tr th:each="komputer : ${komputerList}">
-
-            <td th:text="${komputer.id}"></td>
-
-            <td th:text="${komputer.namaKomputer}"></td>
-
+        <tr th:each="k : ${komputerList}">
+            <td th:text="${k.id}"></td>
+            <td th:text="${k.namaKomputer}" style="font-weight: 600; color: white;"></td>
             <td>
-                <span th:if="${komputer.status == 'Tersedia'}" class="status-tersedia">
-                    🟢 Tersedia
-                </span>
-
-                <span th:if="${komputer.status == 'Dipakai'}" class="status-dipakai">
-                    🔴 Dipakai
-                </span>
+                <span th:if="${k.status == 'Tersedia'}" class="status-tersedia">🟢 Tersedia</span>
+                <span th:if="${k.status == 'Dipakai'}" class="status-dipakai">🔴 Dipakai</span>
             </td>
-
-            <td th:text="'Rp ' + ${komputer.tarifPerJam}"></td>
-
+            <td th:text="'Rp ' + ${#numbers.formatDecimal(k.tarifPerJam,0,'COMMA',0,'POINT')}"></td>
             <td>
-                <a class="edit"
-                   th:href="@{/edit-komputer/{id}(id=${komputer.id})}">
-                    ✏ Edit
-                </a>
+                <a th:if="${k.status == 'Dipakai'}" 
+                   th:href="@{/akhiri-sesi/{id}(id=${k.id})}" 
+                   class="btn-stop"
+                   onclick="return confirm('Apakah Anda yakin ingin menghentikan billing PC ini?')">🛑 Akhiri Sesi</a>
 
-                <a class="hapus"
-                   th:href="@{/delete-komputer/{id}(id=${komputer.id})}"
-                   onclick="return confirm('Yakin ingin menghapus data?')">
-                    🗑 Hapus
-                </a>
+                <a class="action-link edit" th:href="@{/edit-komputer/{id}(id=${k.id})}">✏️ Edit</a>
+                <a class="action-link hapus" th:href="@{/delete-komputer/{id}(id=${k.id})}" onclick="return confirm('Hapus PC ini dari database?')">🗑️ Hapus</a>
             </td>
-
         </tr>
-
     </table>
-
-    <a href="/admin" class="back">
-    ← Kembali ke Dashboard Admin
-    </a>
 
 </div>
 

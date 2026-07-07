@@ -30,156 +30,93 @@ public class AdminController {
     private PembayaranService pembayaranService;
 
     // ================= ADMIN DASHBOARD =================
-
     @GetMapping("/admin")
-    public String adminPage(HttpSession session) {
-
-        Boolean login =
-                (Boolean) session.getAttribute("adminLogin");
-
-        if(login == null || !login){
+    public String adminPage(HttpSession session, Model model) {
+        Boolean login = (Boolean) session.getAttribute("adminLogin");
+        if (login == null || !login) {
             return "redirect:/login";
         }
+
+        // Hitung data real-time untuk Dashboard
+        double totalPendapatan = transaksiService.getAll().stream()
+                .mapToDouble(transaksi -> transaksi.getTotal())
+                .sum();
+
+        long pcAktif = komputerService.getAll().stream()
+                .filter(k -> "Dipakai".equalsIgnoreCase(k.getStatus()))
+                .count();
+        int totalPc = komputerService.getAll().size();
+
+        long totalMember = pelangganService.getAll().stream()
+                .filter(p -> "MEMBER".equalsIgnoreCase(p.getStatus()))
+                .count();
+
+        model.addAttribute("totalPendapatan", totalPendapatan);
+        model.addAttribute("pcAktif", pcAktif);
+        model.addAttribute("totalPc", totalPc);
+        model.addAttribute("totalMember", totalMember);
 
         return "admin";
     }
 
     // ================= PELANGGAN =================
-
     @GetMapping("/pelanggan-page")
-    public String pelangganPage(Model model){
-
-        model.addAttribute(
-                "pelanggan",
-                new Pelanggan());
-
-        model.addAttribute(
-                "pelangganList",
-                pelangganService.getAll());
-
-        return "pelanggan";
-    }
-
-    @PostMapping("/save-pelanggan")
-    public String savePelanggan(
-            Pelanggan pelanggan){
-
-        pelangganService.save(pelanggan);
-
-        return "redirect:/pelanggan-page";
-    }
-
-    @GetMapping("/edit-pelanggan/{id}")
-    public String editPelanggan(
-            @PathVariable Long id,
-            Model model){
-
-        model.addAttribute(
-                "pelanggan",
-                pelangganService.getById(id));
-
-        model.addAttribute(
-                "pelangganList",
-                pelangganService.getAll());
-
+    public String pelangganPage(Model model) {
+        model.addAttribute("pelangganList", pelangganService.getAll());
         return "pelanggan";
     }
 
     @GetMapping("/delete-pelanggan/{id}")
-    public String deletePelanggan(
-            @PathVariable Long id){
-
+    public String deletePelanggan(@PathVariable Long id) {
         pelangganService.delete(id);
-
         return "redirect:/pelanggan-page";
     }
 
     // ================= KOMPUTER =================
-
     @GetMapping("/komputer-page")
-    public String komputerPage(Model model){
-
-        model.addAttribute(
-                "komputer",
-                new Komputer());
-
-        model.addAttribute(
-                "komputerList",
-                komputerService.getAll());
-
+    public String komputerPage(Model model) {
+        model.addAttribute("komputer", new Komputer());
+        model.addAttribute("komputerList", komputerService.getAll());
         return "komputer";
     }
 
     @PostMapping("/save-komputer")
-    public String saveKomputer(
-            Komputer komputer){
-
+    public String saveKomputer(@ModelAttribute Komputer komputer) {
+        if (komputer.getStatus() == null || komputer.getStatus().isEmpty()) {
+            komputer.setStatus("Tersedia");
+        }
         komputerService.save(komputer);
-
         return "redirect:/komputer-page";
     }
 
     @GetMapping("/edit-komputer/{id}")
-    public String editKomputer(
-            @PathVariable Long id,
-            Model model){
-
-        model.addAttribute(
-                "komputer",
-                komputerService.getById(id));
-
-        model.addAttribute(
-                "komputerList",
-                komputerService.getAll());
-
+    public String editKomputer(@PathVariable Long id, Model model) {
+        model.addAttribute("komputer", komputerService.getById(id));
+        model.addAttribute("komputerList", komputerService.getAll());
         return "komputer";
     }
 
     @GetMapping("/delete-komputer/{id}")
-    public String deleteKomputer(
-            @PathVariable Long id){
-
+    public String deleteKomputer(@PathVariable Long id) {
         komputerService.delete(id);
+        return "redirect:/komputer-page";
+    }
 
+    // --- FITUR BARU: AKHIRI SESI (STOP BILLING) ---
+    @GetMapping("/akhiri-sesi/{id}")
+    public String akhiriSesi(@PathVariable Long id) {
+        Komputer komputer = komputerService.getById(id);
+        if (komputer != null) {
+            komputer.setStatus("Tersedia"); // Kembalikan status komputer menjadi kosong/tersedia
+            komputerService.save(komputer);
+        }
         return "redirect:/komputer-page";
     }
 
     // ================= TRANSAKSI =================
-
     @GetMapping("/transaksi-page")
-public String transaksiPage(Model model){
-
-    model.addAttribute(
-            "transaksi",
-            new com.cafe.demo.model.Transaksi());
-
-    model.addAttribute(
-            "pelangganList",
-            pelangganService.getAll());
-
-    model.addAttribute(
-            "komputerList",
-            komputerService.getAll());
-
-    model.addAttribute(
-            "transaksiList",
-            transaksiService.getAll());
-
-    return "transaksi";
-}
-
-    // ================= PEMBAYARAN =================
-
-    @GetMapping("/pembayaran-page")
-    public String pembayaranPage(
-            Model model){
-
-        model.addAttribute(
-                "pembayaranList",
-                pembayaranService.getAll());
-
-        return "pembayaran-admin";
+    public String transaksiPage(Model model) {
+        model.addAttribute("transaksiList", transaksiService.getAll());
+        return "transaksi";
     }
-
-    
 }

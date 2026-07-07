@@ -85,9 +85,8 @@
         </p>
 
         <p>
-            Total :
-            Rp
-            <b th:text="${transaksi.total}"></b>
+            Total : Rp 
+            <b th:text="${transaksi != null ? #numbers.formatInteger(transaksi.total, 0, 'POINT') : '0'}"></b>
         </p>
 
     </div>

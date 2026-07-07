@@ -1,265 +1,98 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Data Pelanggan - CyberNet</title>
+    <title>Database Pelanggan - CyberNet Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #1e293b, #0f172a);
+            color: white;
+            padding: 40px 20px;
+        }
 
-```
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(56,189,248,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
 
-<style>
+        .header-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
 
-    *{
-        margin:0;
-        padding:0;
-        box-sizing:border-box;
-        font-family:'Inter', sans-serif;
-    }
+        .header-title h1 { color: #38bdf8; font-size: 24px; }
+        
+        .back-btn {
+            color: #94a3b8; text-decoration: none; font-weight: 600;
+            padding: 8px 16px; border-radius: 8px; border: 1px solid #94a3b8;
+            transition: 0.3s;
+        }
+        .back-btn:hover { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
 
-    body{
-        min-height:100vh;
-        background: radial-gradient(circle at top, #1e293b, #0f172a);
-        color:white;
-        padding:30px;
-    }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: rgba(56,189,248,0.1); color: #38bdf8; padding: 15px; text-align: left; }
+        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e2e8f0; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
 
-    .container{
-        max-width:1200px;
-        margin:auto;
-        background: rgba(30, 41, 59, 0.7);
-        backdrop-filter: blur(10px);
-        padding:30px;
-        border-radius:16px;
-        border:1px solid rgba(56,189,248,0.15);
-        box-shadow:0 20px 40px rgba(0,0,0,0.4);
-    }
-
-    h1{
-        text-align:center;
-        margin-bottom:25px;
-        color:#38bdf8;
-        font-size:32px;
-    }
-
-    form{
-        background: rgba(255,255,255,0.05);
-        padding:20px;
-        border-radius:12px;
-        margin-bottom:25px;
-    }
-
-    input, select{
-        width:100%;
-        padding:12px;
-        margin-top:10px;
-        border:none;
-        border-radius:10px;
-        background: rgba(255,255,255,0.08);
-        color:white;
-        outline:none;
-    }
-
-    select option{
-        color:black;
-    }
-
-    button{
-        width:100%;
-        margin-top:15px;
-        padding:12px;
-        border:none;
-        border-radius:10px;
-        background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-        color:#0f172a;
-        font-weight:700;
-        cursor:pointer;
-    }
-
-    table{
-        width:100%;
-        border-collapse:collapse;
-        background: rgba(255,255,255,0.05);
-        border-radius:12px;
-        overflow:hidden;
-    }
-
-    th, td{
-        padding:14px;
-        text-align:center;
-    }
-
-    th{
-        background:#38bdf8;
-        color:#0f172a;
-    }
-
-    tr:hover{
-        background: rgba(255,255,255,0.05);
-    }
-
-    .badge-member{
-        background:#22c55e;
-        color:white;
-        padding:5px 12px;
-        border-radius:20px;
-        font-weight:700;
-    }
-
-    .badge-umum{
-        background:#64748b;
-        color:white;
-        padding:5px 12px;
-        border-radius:20px;
-        font-weight:700;
-    }
-
-    .edit{
-        color:#60a5fa;
-        text-decoration:none;
-        margin-right:10px;
-    }
-
-    .hapus{
-        color:#fb7185;
-        text-decoration:none;
-    }
-
-    .back{
-        display:inline-block;
-        margin-top:20px;
-        color:#94a3b8;
-        text-decoration:none;
-    }
-
-    .back:hover{
-        color:#38bdf8;
-    }
-
-</style>
-```
-
+        .badge-member { background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge-umum { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; border: 1px solid rgba(148, 163, 184, 0.3); }
+        .point-text { color: #facc15; font-weight: bold; }
+        
+        .hapus-btn { color: #fb7185; text-decoration: none; font-size: 14px; font-weight: 600; }
+        .hapus-btn:hover { text-decoration: underline; }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    
+    <div class="header-title">
+        <h1>👥 Database Pelanggan</h1>
+        <a href="/admin" class="back-btn">← Kembali ke Dashboard</a>
+    </div>
 
-```
-<h1>👤 Data Pelanggan</h1>
-
-<form action="/save-pelanggan" method="post">
-
-    <input type="hidden"
-           name="id"
-           th:value="${pelanggan.id}">
-
-    <input type="text"
-           name="nama"
-           placeholder="Nama Pelanggan"
-           th:value="${pelanggan.nama}"
-           required>
-
-    <input type="text"
-           name="noHp"
-           placeholder="Nomor HP"
-           th:value="${pelanggan.noHp}"
-           required>
-
-    <input type="text"
-           name="username"
-           placeholder="Username"
-           th:value="${pelanggan.username}">
-
-    <input type="password"
-           name="password"
-           placeholder="Password"
-           th:value="${pelanggan.password}">
-
-    <select name="status" required>
-
-        <option value="">-- Pilih Status --</option>
-
-        <option value="UMUM"
-                th:selected="${pelanggan.status == 'UMUM'}">
-            UMUM
-        </option>
-
-        <option value="MEMBER"
-                th:selected="${pelanggan.status == 'MEMBER'}">
-            MEMBER
-        </option>
-
-    </select>
-
-    <input type="number"
-           name="point"
-           placeholder="Point Member"
-           th:value="${pelanggan.point}">
-
-    <button type="submit">💾 Simpan Data</button>
-
-</form>
-
-<table>
-
-    <tr>
-        <th>ID</th>
-        <th>Nama</th>
-        <th>No HP</th>
-        <th>Username</th>
-        <th>Status</th>
-        <th>Point</th>
-        <th>Aksi</th>
-    </tr>
-
-    <tr th:each="p : ${pelangganList}">
-
-        <td th:text="${p.id}"></td>
-
-        <td th:text="${p.nama}"></td>
-
-        <td th:text="${p.noHp}"></td>
-
-        <td th:text="${p.username}"></td>
-
-        <td>
-
-            <span th:if="${p.status == 'MEMBER'}"
-                  class="badge-member">
-                MEMBER
-            </span>
-
-            <span th:if="${p.status == 'UMUM'}"
-                  class="badge-umum">
-                UMUM
-            </span>
-
-        </td>
-
-        <td th:text="${p.point}"></td>
-
-        <td>
-
-            <a class="edit"
-               th:href="@{/edit-pelanggan/{id}(id=${p.id})}">
-                Edit
-            </a>
-
-            <a class="hapus"
-               th:href="@{/delete-pelanggan/{id}(id=${p.id})}">
-                Hapus
-            </a>
-
-        </td>
-
-    </tr>
-
-</table>
-
-<a href="/admin" class="back">
-    ← Kembali ke Dashboard Admin
-</a>
-```
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nama Lengkap</th>
+            <th>No. Handphone</th>
+            <th>Username</th>
+            <th>Status</th>
+            <th>Poin Reward</th>
+            <th>Aksi</th>
+        </tr>
+        
+        <tr th:each="p : ${pelangganList}">
+            <td th:text="${p.id}"></td>
+            <td th:text="${p.nama}" style="font-weight: 600;"></td>
+            <td th:text="${p.noHp}"></td>
+            <td th:text="${p.username != null ? p.username : '-'}"></td>
+            <td>
+                <span th:if="${p.status == 'MEMBER'}" class="badge-member">MEMBER</span>
+                <span th:if="${p.status == 'UMUM'}" class="badge-umum">UMUM</span>
+            </td>
+            <td>
+                <span th:if="${p.status == 'MEMBER'}" th:text="${p.point} + ' pts'" class="point-text"></span>
+                <span th:if="${p.status == 'UMUM'}">-</span>
+            </td>
+            <td>
+                <a class="hapus-btn" th:href="@{/delete-pelanggan/{id}(id=${p.id})}" onclick="return confirm('Yakin ingin menghapus pelanggan ini dari sistem?')">Hapus</a>
+            </td>
+        </tr>
+    </table>
 
 </div>
 

@@ -1,158 +1,177 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Dashboard Admin</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
+    <title>Control Center - CyberNet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:'Inter', sans-serif;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body {
+            background: #0f172a;
+            color: white;
+            min-height: 100vh;
+            padding-bottom: 60px;
+            overflow-x: hidden;
         }
 
-        body{
-            background: radial-gradient(circle at top, #1e293b, #0f172a);
-            color:white;
-            min-height:100vh;
-        }
+        /* ANIMATED BACKGROUND GLOW */
+        .bg-glow { position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 8s infinite alternate; }
+        .bg-glow-2 { position: fixed; bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(34, 197, 94, 0.1) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 6s infinite alternate-reverse; }
+        @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
 
-        /* NAV TOP */
-        .header{
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(10px);
-            padding:20px;
-            text-align:center;
-            border-bottom:1px solid rgba(56,189,248,0.2);
+        /* HEADER NAVBAR */
+        .navbar {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px);
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
         }
+        .navbar h1 { font-size: 24px; color: white; letter-spacing: 1px; font-weight: 900; }
+        .navbar h1 span { color: #38bdf8; text-shadow: 0 0 15px rgba(56,189,248,0.5); }
+        
+        .nav-links { display: flex; align-items: center; gap: 25px; }
+        .btn-home { color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.3s; }
+        .btn-home:hover { color: white; }
+        .logout-btn { background: rgba(244, 63, 94, 0.1); color: #f43f5e; padding: 8px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; border: 1px solid rgba(244, 63, 94, 0.3); transition: 0.3s; }
+        .logout-btn:hover { background: #f43f5e; color: white; box-shadow: 0 0 15px rgba(244, 63, 94, 0.4); }
 
-        .header h1{
-            color:#38bdf8;
-            font-size:24px;
-            letter-spacing:1px;
+        /* MAIN CONTAINER */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; animation: slideUp 0.6s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* QUICK STATS PANEL */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 50px; }
+        
+        .stat-card {
+            background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05); border-radius: 20px;
+            padding: 30px 25px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: 0.4s; position: relative; overflow: hidden;
         }
+        .stat-card:hover { transform: translateY(-5px); background: rgba(30, 41, 59, 0.8); }
+        
+        .stat-title { color: #94a3b8; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+        .stat-value { font-size: 38px; font-weight: 900; }
+        
+        .text-green { color: #22c55e; text-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }
+        .text-neon { color: #38bdf8; text-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
+        .text-purple { color: #a855f7; text-shadow: 0 0 20px rgba(168, 85, 247, 0.3); }
 
-        /* CONTAINER */
-        .container{
-            width:90%;
-            margin:auto;
-            margin-top:60px;
+        /* MENU CARDS */
+        .section-title { margin-bottom: 25px; font-size: 22px; font-weight: 800; color: white; display: flex; align-items: center; gap: 10px; }
+        .section-title::before { content: ''; display: inline-block; width: 6px; height: 24px; background: #38bdf8; border-radius: 4px; }
+        
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
+        
+        .menu-card {
+            background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05); border-radius: 20px;
+            padding: 35px 30px; display: flex; align-items: center; gap: 25px;
+            transition: all 0.3s ease; text-decoration: none; color: white;
+            position: relative; overflow: hidden;
         }
+        
+        /* Dekorasi Garis Samping untuk Menu */
+        .card-user { border-left: 5px solid #38bdf8; }
+        .card-pc { border-left: 5px solid #a855f7; }
+        .card-report { border-left: 5px solid #22c55e; }
+        .card-kasir { border-left: 5px solid #facc15; }
+        .card-menu-fb { border-left: 5px solid #f43f5e; }
 
-        /* GRID CARDS */
-        .cards{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-            gap:25px;
+        .menu-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
         }
-
-        .card{
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(10px);
-            padding:30px;
-            border-radius:14px;
-            text-align:center;
-            border:1px solid rgba(56,189,248,0.15);
-            transition:0.3s;
-        }
-
-        .card:hover{
-            transform:translateY(-8px);
-            border-color:#38bdf8;
-            box-shadow:0 10px 30px rgba(56,189,248,0.2);
-        }
-
-        .card h2{
-            margin-bottom:10px;
-            font-size:22px;
-        }
-
-        .card p{
-            color:#cbd5e1;
-            margin-bottom:20px;
-            font-size:14px;
-        }
-
-        /* BUTTON */
-        .btn{
-            display:inline-block;
-            padding:10px 18px;
-            background:linear-gradient(90deg, #38bdf8, #0ea5e9);
-            color:#0f172a;
-            text-decoration:none;
-            border-radius:10px;
-            font-weight:600;
-            transition:0.3s;
-        }
-
-        .btn:hover{
-            transform:translateY(-2px);
-            box-shadow:0 10px 20px rgba(56,189,248,0.3);
-        }
-
-        /* BACK BUTTON */
-        .back{
-            text-align:center;
-            margin-top:50px;
-        }
-
-        .back a{
-            background:transparent;
-            border:1px solid #38bdf8;
-            color:#38bdf8;
-        }
-
-        .back a:hover{
-            background:#38bdf8;
-            color:#0f172a;
-        }
-
+        
+        .menu-icon { font-size: 45px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3)); transition: 0.3s; }
+        .menu-card:hover .menu-icon { transform: scale(1.1) rotate(-5deg); }
+        
+        .menu-text-wrap { text-align: left; }
+        .menu-card h2 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+        .menu-card p { font-size: 14px; color: #94a3b8; line-height: 1.5; }
     </style>
 </head>
-
 <body>
 
-<!-- HEADER -->
-<div class="header">
-    <h1>Dashboard Admin CyberNet</h1>
-</div>
+<div class="bg-glow"></div>
+<div class="bg-glow-2"></div>
 
-<!-- CONTENT -->
+<nav class="navbar">
+    <h1>CYBERNET <span>ADMIN</span></h1>
+    <div class="nav-links">
+        <a href="/" class="btn-home">🏠 Lihat Web Depan</a>
+        <a href="/logout" class="logout-btn" onclick="return confirm('Tutup sesi Admin?')">Log Out</a>
+    </div>
+</nav>
+
 <div class="container">
-
-    <div class="cards">
-
-        <div class="card">
-            <h2>👤 Pelanggan</h2>
-            <p>Kelola data pelanggan warnet</p>
-            <a href="/pelanggan-page" class="btn">Kelola</a>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-title">Total Pendapatan</div>
+            <div class="stat-value text-green" th:text="'Rp ' + ${#numbers.formatInteger(totalPendapatan, 0, 'POINT')}">Rp 0</div>
         </div>
-
-        <div class="card">
-            <h2>🖥 Komputer</h2>
-            <p>Kelola komputer yang tersedia</p>
-            <a href="/komputer-page" class="btn">Kelola</a>
+        <div class="stat-card">
+            <div class="stat-title">Komputer Aktif</div>
+            <div class="stat-value text-neon" th:text="${pcAktif} + ' / ' + ${totalPc}">0 / 0</div>
         </div>
-
-        <div class="card">
-            <h2>💳 Transaksi</h2>
-            <p>Kelola transaksi pelanggan</p>
-            <a href="/transaksi-page" class="btn">Kelola</a>
+        <div class="stat-card">
+            <div class="stat-title">Member Terdaftar</div>
+            <div class="stat-value text-purple" th:text="${totalMember}">0</div>
         </div>
-
-        <div class="card">
-            <h2>💰 Pembayaran</h2>
-            <p>Kelola pembayaran pelanggan</p>
-            <a href="/pembayaran-page" class="btn">Kelola</a>
-        </div>
-
     </div>
 
-    <div class="back">
-        <a href="/" class="btn">← Kembali ke Home</a>
+    <h2 class="section-title">Menu Sistem Kelola</h2>
+    
+    <div class="menu-grid">
+        
+        <a href="/pelanggan-page" class="menu-card card-user">
+            <div class="menu-icon">👥</div>
+            <div class="menu-text-wrap">
+                <h2>Database Pelanggan</h2>
+                <p>Pantau data semua member, status akun, dan kelola saldo poin mereka.</p>
+            </div>
+        </a>
+
+        <a href="/komputer-page" class="menu-card card-pc">
+            <div class="menu-icon">🖥️</div>
+            <div class="menu-text-wrap">
+                <h2>Manajemen Komputer</h2>
+                <p>Atur tarif per jam, kelola status PC (Tersedia/Rusak/Dipakai), dan kontrol billing.</p>
+            </div>
+        </a>
+
+        <a href="/transaksi-page" class="menu-card card-report">
+            <div class="menu-icon">💳</div>
+            <div class="menu-text-wrap">
+                <h2>Laporan Transaksi PC</h2>
+                <p>Cetak dan lihat seluruh riwayat pemakaian PC serta rekap pemasukan billing.</p>
+            </div>
+        </a>
+
+        <a href="/admin/pesanan-fb" class="menu-card card-kasir">
+            <div class="menu-icon">🍜</div>
+            <div class="menu-text-wrap">
+                <h2 style="color: #facc15;">Pesanan Kasir Kantin</h2>
+                <p>Terima notifikasi pesanan Indomie/Minuman masuk dan tandai jika sudah diantar.</p>
+            </div>
+        </a>
+
+        <a href="/admin/kelola-menu" class="menu-card card-menu-fb">
+            <div class="menu-icon">🍿</div>
+            <div class="menu-text-wrap">
+                <h2>Database Menu F&B</h2>
+                <p>Tambahkan pilihan menu jajanan baru, set harga rupiah, dan harga tukar poin.</p>
+            </div>
+        </a>
+
     </div>
 
 </div>

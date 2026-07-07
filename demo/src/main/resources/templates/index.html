@@ -1,126 +1,117 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>CyberNet Internet Cafe</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <!-- GLOBAL CSS -->
-    <link rel="stylesheet" href="/css/style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexaNet - Premium E-Sports Arena</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        /* HERO SPECIAL ONLY (biar global CSS tetap dipakai) */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: #0f172a; color: white; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
 
-        .hero {
-            height: 85vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-        }
+        /* ANIMASI BACKGROUND GLOW */
+        .bg-glow { position: absolute; top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 8s infinite alternate; }
+        .bg-glow-2 { position: absolute; bottom: 10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 6s infinite alternate-reverse; }
+        @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
 
-        .hero h1 {
-            font-size: 64px;
-            font-weight: 800;
-            background: linear-gradient(90deg, #38bdf8, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: glow 3s infinite alternate;
-        }
+        /* NAVBAR */
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05); position: fixed; top: 0; width: 100%; z-index: 100; transition: 0.3s; }
+        .navbar .logo { font-size: 26px; font-weight: 900; color: white; text-decoration: none; letter-spacing: 1px; }
+        .navbar .logo span { color: #38bdf8; text-shadow: 0 0 15px rgba(56,189,248,0.5); }
+        .nav-links { display: flex; align-items: center; gap: 30px; }
+        .nav-links a { text-decoration: none; font-weight: 600; font-size: 14px; color: #cbd5e1; transition: 0.3s; }
+        .nav-links a:hover { color: #38bdf8; }
+        
+        .btn-login { background: rgba(56,189,248,0.1); color: #38bdf8 !important; padding: 10px 24px; border-radius: 8px; border: 1px solid rgba(56,189,248,0.3); font-weight: 800 !important; }
+        .btn-login:hover { background: #38bdf8; color: #0f172a !important; box-shadow: 0 0 20px rgba(56,189,248,0.4); }
 
-        @keyframes glow {
-            from { filter: drop-shadow(0 0 10px #38bdf8); }
-            to { filter: drop-shadow(0 0 25px #60a5fa); }
-        }
+        /* HERO SECTION */
+        .hero { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 150px 20px 80px; position: relative; z-index: 10; animation: slideUp 0.8s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .hero-badge { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); padding: 6px 16px; border-radius: 30px; font-size: 12px; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 25px; display: inline-block; }
+        .hero h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; text-transform: uppercase; letter-spacing: -1px; }
+        .hero h1 span { background: linear-gradient(90deg, #38bdf8, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(56,189,248,0.2); }
+        .hero p { color: #94a3b8; font-size: 18px; max-width: 600px; margin: 0 auto 40px; line-height: 1.6; }
 
-        .hero p {
-            font-size: 18px;
-            margin-top: 15px;
-            color: #cbd5e1;
-            max-width: 600px;
-        }
+        /* BUTTONS HERO */
+        .hero-btns { display: flex; gap: 20px; justify-content: center; }
+        .btn-primary { background: linear-gradient(90deg, #38bdf8, #0ea5e9); color: #0f172a; padding: 16px 36px; border-radius: 12px; font-size: 16px; font-weight: 800; text-decoration: none; box-shadow: 0 10px 25px rgba(56,189,248,0.3); transition: 0.3s; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(56,189,248,0.5); filter: brightness(1.1); }
+        
+        .btn-outline { background: rgba(255,255,255,0.03); color: white; padding: 16px 36px; border-radius: 12px; font-size: 16px; font-weight: 700; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); transition: 0.3s; }
+        .btn-outline:hover { background: rgba(255,255,255,0.08); border-color: #cbd5e1; }
 
-        .btn-group {
-            margin-top: 30px;
-        }
+        /* FEATURES SECTION */
+        .features { max-width: 1200px; margin: 0 auto 100px; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; position: relative; z-index: 10; }
+        .feature-card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); padding: 40px 30px; border-radius: 20px; text-align: center; backdrop-filter: blur(10px); transition: 0.4s; }
+        .feature-card:hover { transform: translateY(-10px); background: rgba(30, 41, 59, 0.7); border-color: rgba(56,189,248,0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .feature-icon { font-size: 48px; margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(56,189,248,0.3)); }
+        .feature-card h3 { font-size: 22px; font-weight: 800; margin-bottom: 12px; }
+        .feature-card p { color: #94a3b8; font-size: 15px; line-height: 1.5; }
 
-        footer {
-            text-align: center;
-            padding: 25px;
-            background: #1e293b;
-            color: #94a3b8;
-            border-top: 1px solid rgba(56,189,248,0.1);
+        /* FOOTER */
+        footer { border-top: 1px solid rgba(255,255,255,0.05); padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.5); }
+        .footer-text { color: #64748b; font-size: 13px; }
+        .admin-link { color: #475569; text-decoration: none; font-size: 12px; transition: 0.3s; }
+        .admin-link:hover { color: #f43f5e; text-shadow: 0 0 10px rgba(244,63,94,0.5); }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 20px; }
+            .nav-links { display: none; } /* Simplified mobile view */
+            .hero h1 { font-size: 42px; }
+            .hero-btns { flex-direction: column; }
         }
     </style>
 </head>
-
 <body>
 
-<!-- NAVBAR -->
-<div class="navbar">
-    <div><b>CyberNet</b></div>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
 
-    <div>
-        <a href="/">Home</a>
-        <a href="/reservasi">Reservasi</a>
-        <a href="/login-member">Member</a>
-        <a href="/login">Admin</a>
-    </div>
-</div>
+    <nav class="navbar">
+        <a href="/" class="logo">CYBER<span>NET</span></a>
+        <div class="nav-links">
+            <a href="/fasilitas">👑 Info Fasilitas</a>
+            <a href="/pesan-makan">🍜 Pesan F&B</a>
+            <a href="/register-member">Daftar Akun</a>
+            <a href="/login-member" class="btn-login">Login Member</a>
+        </div>
+    </nav>
 
-<!-- HERO -->
-<section class="hero">
-
-    <h1>CYBERNET INTERNET CAFE</h1>
-
-    <p>
-        Warnet Gaming Modern dengan Internet Super Cepat, Stabil, dan Siap untuk Gaming & Produktivitas
-    </p>
-
-    <div class="btn-group">
-
-        <a href="/reservasi" class="btn">
-            Reservasi Sekarang
-        </a>
-
-        <a href="/login-member" class="btn btn-outline">
-            Login Member
-        </a>
-
-        <a href="/login" class="btn btn-outline">
-            Login Admin
-        </a>
-
+    <div class="hero">
+        <div class="hero-badge">THE ULTIMATE GAMING ARENA</div>
+        <h1>Elevate Your<br><span>Gaming Experience</span></h1>
+        <p>Bermain layaknya Pro Player. Nikmati PC spesifikasi dewa, internet super cepat tanpa lag, dan fasilitas VVIP yang didesain khusus untuk kenyamanan push rank Anda.</p>
+        
+        <div class="hero-btns">
+            <a href="/reservasi" class="btn-primary">🎮 Booking PC (Guest)</a>
+            <a href="/fasilitas" class="btn-outline">Lihat Spek PC & Lantai</a>
+        </div>
     </div>
 
-</section>
-
-<!-- INFO -->
-<section class="container">
-
-    <div class="card">
-        <h2>20+</h2>
-        <p>PC Gaming</p>
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">🚀</div>
+            <h3>Ping 1ms Anti-Lag</h3>
+            <p>Didukung oleh infrastruktur jaringan dedicated fiber optic yang menjamin ping super stabil untuk game kompetitif.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🖥️</div>
+            <h3>RTX 4090 Ready</h3>
+            <p>Ratakan settingan grafis game berat dengan FPS tinggi berkat prosesor i9 dan VGA terbaik di kelasnya.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🍔</div>
+            <h3>Premium Kantin F&B</h3>
+            <p>Lapar saat mabar? Pesan makanan dan minuman langsung dari kursi Anda. Kumpulkan poin dan tukarkan dengan snack gratis.</p>
+        </div>
     </div>
 
-    <div class="card">
-        <h2>100 Mbps</h2>
-        <p>Internet Stabil</p>
-    </div>
-
-    <div class="card">
-        <h2>Rp 5K</h2>
-        <p>Per Jam</p>
-    </div>
-
-</section>
-
-<!-- FOOTER -->
-<footer>
-    © 2026 CyberNet Internet Cafe - All Rights Reserved
-</footer>
+    <footer>
+        <div class="footer-text">© 2026 CyberNet E-Sports Arena. All rights reserved.</div>
+        <a href="/login" class="admin-link">System Administrator</a>
+    </footer>
 
 </body>
 </html>
