@@ -1,194 +1,89 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Member - CyberNet</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
+    <title>Daftar Member - NexaNet Cafe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        /* RESET & BASE STYLES */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { 
+            min-height: 100vh; display: flex; justify-content: center; align-items: center; 
+            background: #0f172a; color: white; padding: 20px; overflow-x: hidden;
         }
 
-        body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: radial-gradient(circle at top, #1e293b, #0f172a);
-            color: white;
-            padding: 20px;
-        }
+        /* ANIMATED BACKGROUND GLOW */
+        .bg-glow { position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 8s infinite alternate; }
+        .bg-glow-2 { position: fixed; bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 6s infinite alternate-reverse; }
+        @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
 
-        /* CONTAINER CARD WITH NEON GLOW */
+        /* REGISTER CARD */
         .register-box {
-            width: 420px;
-            padding: 40px 35px;
-            border-radius: 16px;
-            background: rgba(30, 41, 59, 0.75);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.15), 
-                        0 20px 40px rgba(0, 0, 0, 0.5);
-            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+            width: 100%; max-width: 420px; padding: 40px; border-radius: 24px;
+            background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: slideUp 0.6s ease-out;
         }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CARD HOVER INTERACTION */
-        .register-box:hover {
-            border-color: #38bdf8;
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3), 
-                        0 20px 50px rgba(0, 0, 0, 0.6);
-        }
+        h2 { font-size: 28px; font-weight: 900; margin-bottom: 5px; text-align: center; }
+        h2 span { color: #38bdf8; text-shadow: 0 0 15px rgba(56,189,248,0.4); }
+        .subtitle { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 30px; }
 
-        /* TYPOGRAPHY */
-        h2 {
-            text-align: center;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            background: linear-gradient(90deg, #38bdf8, #60a5fa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-
-        /* FORM ELEMENTS */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #38bdf8;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 12px; font-weight: 800; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
 
         input {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 10px;
-            color: white;
-            font-size: 15px;
-            transition: all 0.3s ease;
+            width: 100%; padding: 15px; background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;
+            font-size: 14px; transition: 0.3s;
         }
+        input:focus { outline: none; border-color: #38bdf8; background: rgba(15, 23, 42, 0.9); box-shadow: 0 0 15px rgba(56, 189, 248, 0.1); }
 
-        /* INPUT INTERACTIVE GLOW */
-        input:focus {
-            outline: none;
-            border-color: #38bdf8;
-            background: rgba(15, 23, 42, 0.9);
-            box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+        .btn-submit {
+            width: 100%; padding: 15px; background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+            color: #0f172a; border: none; border-radius: 12px; font-weight: 900;
+            font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 10px;
+            box-shadow: 0 10px 20px rgba(56,189,248,0.2);
         }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(56,189,248,0.4); filter: brightness(1.1); }
 
-        input::placeholder {
-            color: #64748b;
-            font-size: 14px;
-        }
-
-        /* GAMING BUTTON */
-        button {
-            width: 100%;
-            padding: 14px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 10px;
-            background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-            color: #0f172a;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
-            opacity: 0.95;
-        }
-
-        button:active {
-            transform: translateY(1px);
-        }
-
-        /* BACK NAVIGATION LINK */
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 25px;
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s ease;
-        }
-
-        .back-link:hover {
-            color: #38bdf8;
-            text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
-        }
+        .back-link { display: block; text-align: center; margin-top: 25px; color: #64748b; text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.3s; }
+        .back-link:hover { color: white; }
     </style>
 </head>
 <body>
 
+<div class="bg-glow"></div>
+<div class="bg-glow-2"></div>
+
 <div class="register-box">
-    <h2>CyberNet</h2>
+    <h2>Nexa<span>Net</span></h2>
     <p class="subtitle">Registrasi Akun Member Baru</p>
 
     <form th:action="@{/register-member}" method="post">
-        
         <div class="form-group">
             <label>Nama Lengkap</label>
-            <input type="text" 
-                   name="nama" 
-                   placeholder="Masukkan nama lengkap" 
-                   required>
+            <input type="text" name="nama" placeholder="Contoh: Budi Gaming" required>
         </div>
 
         <div class="form-group">
             <label>No. Handphone</label>
-            <input type="text" 
-                   name="noHp" 
-                   placeholder="Contoh: 08123456789" 
-                   required>
+            <input type="text" name="noHp" placeholder="0812xxxxxx" required>
         </div>
 
         <div class="form-group">
             <label>Username</label>
-            <input type="text" 
-                   name="username" 
-                   placeholder="Buat username unik" 
-                   required>
+            <input type="text" name="username" placeholder="Username unik" required>
         </div>
 
         <div class="form-group">
             <label>Password</label>
-            <input type="password" 
-                   name="password" 
-                   placeholder="••••••••" 
-                   required>
+            <input type="password" name="password" placeholder="••••••••" required>
         </div>
 
-        <button type="submit">⚡ DAFTAR MEMBER</button>
-
+        <button type="submit" class="btn-submit">Daftar Sekarang</button>
     </form>
 
     <a href="/login-member" class="back-link">← Sudah punya akun? Login disini</a>

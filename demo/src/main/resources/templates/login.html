@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Portal - CyberNet</title>
+    <title>Admin Portal - NexaNet Cafe</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: #0f172a; color: white; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 
-        .bg-glow { position: fixed; top: -20%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); z-index: -1; filter: blur(50px); }
-        .bg-glow-2 { position: fixed; bottom: -20%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(244, 63, 94, 0.1) 0%, transparent 70%); z-index: -1; filter: blur(50px); }
+        .bg-glow { position: fixed; top: -20%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%); z-index: -1; filter: blur(50px); animation: pulse 8s infinite alternate; }
+        .bg-glow-2 { position: fixed; bottom: -20%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); z-index: -1; filter: blur(50px); animation: pulse 6s infinite alternate-reverse; }
+        @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
 
         .login-box {
             width: 100%; max-width: 420px; background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(15px);
-            border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 24px; padding: 40px;
+            border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 40px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.5); text-align: center; position: relative;
         }
 
@@ -32,10 +33,10 @@
         input:focus { outline: none; border-color: #8b5cf6; background: rgba(15, 23, 42, 0.9); }
         
         .btn-submit {
-            width: 100%; padding: 15px; background: #8b5cf6; color: white; border: none;
+            width: 100%; padding: 15px; background: linear-gradient(90deg, #38bdf8, #8b5cf6); color: white; border: none;
             border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 5px;
         }
-        .btn-submit:hover { background: #7c3aed; box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4); transform: translateY(-2px); }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4); filter: brightness(1.1); }
         
         .back-home { position: absolute; top: 30px; left: 30px; color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.3s; }
         .back-home:hover { color: white; }
@@ -50,7 +51,7 @@
 <div class="login-box">
     <div class="icon-avatar">🛡️</div>
     <h2>Sistem Root</h2>
-    <p class="subtitle">Otorisasi Operator CyberNet</p>
+    <p class="subtitle">Otorisasi Operator NexaNet</p>
 
     <div th:if="${param.error}" class="error-msg">
         Akses Ditolak. Kredensial tidak valid.

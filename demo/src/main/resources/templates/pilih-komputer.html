@@ -3,59 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pilih PC - CyberNet</title>
+    <title>Pilih PC - NexaNet Cafe</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: #0f172a; color: white; padding: 50px 20px; min-height: 100vh; }
+        body { background: #0f172a; color: white; min-height: 100vh; padding: 100px 20px; overflow-x: hidden; }
 
-        .bg-glow { position: fixed; top: -20%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%); z-index: -1; filter: blur(50px); }
+        /* ANIMASI BACKGROUND GLOW */
+        .bg-glow { position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 8s infinite alternate; }
+        .bg-glow-2 { position: fixed; bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 6s infinite alternate-reverse; }
+        @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
 
-        .container { max-width: 1100px; margin: auto; }
+        .container { max-width: 1100px; margin: auto; animation: slideUp 0.6s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        .header { text-align: center; margin-bottom: 40px; }
-        .header h1 { font-size: 36px; font-weight: 900; color: white; margin-bottom: 10px; }
+        .header { text-align: center; margin-bottom: 50px; }
+        .header h1 { font-size: 40px; font-weight: 900; margin-bottom: 10px; }
+        .header h1 span { color: #38bdf8; text-shadow: 0 0 15px rgba(56,189,248,0.5); }
         .header p { color: #94a3b8; font-size: 16px; }
 
-        .pc-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;
-        }
+        .pc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
 
         .pc-card {
-            background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 16px; padding: 25px; text-align: center; transition: 0.3s;
-            display: flex; flex-direction: column; justify-content: space-between;
+            background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px; padding: 30px; text-align: center; backdrop-filter: blur(12px);
+            transition: 0.4s; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        .pc-card:hover { border-color: #38bdf8; transform: translateY(-5px); background: rgba(30, 41, 59, 0.7); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+        .pc-card:hover { border-color: #38bdf8; transform: translateY(-8px); background: rgba(30, 41, 59, 0.8); box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
 
-        .pc-icon { font-size: 45px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(56,189,248,0.3)); }
-        .pc-name { font-size: 22px; font-weight: 800; color: white; margin-bottom: 5px; }
-        .pc-price { color: #38bdf8; font-weight: 700; font-size: 16px; margin-bottom: 20px; }
+        .pc-icon { font-size: 50px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(56,189,248,0.3)); }
+        .pc-name { font-size: 20px; font-weight: 900; margin-bottom: 5px; }
+        .pc-price { color: #38bdf8; font-weight: 700; font-size: 15px; margin-bottom: 25px; }
 
         /* Badge Status */
-        .status { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; margin-bottom: 15px; }
-        .status.tersedia { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
-        .status.terpakai { background: rgba(244, 63, 94, 0.2); color: #f87171; border: 1px solid rgba(244, 63, 94, 0.4); }
+        .status { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 0.5px; }
+        .status.tersedia { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .status.terpakai { background: rgba(244, 63, 94, 0.15); color: #f87171; border: 1px solid rgba(244, 63, 94, 0.3); }
 
         .btn-pilih {
-            display: block; width: 100%; padding: 12px; background: rgba(56,189,248,0.1);
-            color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 10px; font-weight: 700; text-decoration: none; transition: 0.2s;
+            display: block; width: 100%; padding: 14px; background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+            color: #0f172a; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s;
         }
-        .btn-pilih:hover { background: #38bdf8; color: #0f172a; }
+        .btn-pilih:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(56,189,248,0.3); filter: brightness(1.1); }
         
         .btn-disabled {
-            display: block; width: 100%; padding: 12px; background: rgba(255,255,255,0.05);
-            color: #64748b; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; font-weight: 700; text-decoration: none; cursor: not-allowed;
+            display: block; width: 100%; padding: 14px; background: rgba(255,255,255,0.05);
+            color: #64748b; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; font-weight: 700; cursor: not-allowed;
         }
     </style>
 </head>
 <body>
 
 <div class="bg-glow"></div>
+<div class="bg-glow-2"></div>
 
 <div class="container">
     <div class="header">
-        <h1>🖥️ Pilih PC Pilihanmu</h1>
+        <h1>Pilih <span>PC Pilihanmu</span></h1>
         <p>Silakan pilih unit komputer yang tersedia untuk mulai bermain.</p>
     </div>
 
@@ -66,11 +70,10 @@
             <div th:if="${k.status == 'Tersedia'}" class="status tersedia">✅ Ready</div>
             <div th:if="${k.status == 'Terpakai'}" class="status terpakai">❌ In Use</div>
 
-            <h3 class="pc-name" th:text="${k.namaKomputer}">PC-01 (VIP)</h3>
+            <h3 class="pc-name" th:text="${k.namaKomputer}">PC-00</h3>
             <p class="pc-price" th:text="'Rp ' + ${#numbers.formatInteger(k.tarifPerJam, 0, 'POINT')} + ' / jam'"></p>
             
-            <a th:if="${k.status == 'Tersedia'}" th:href="@{/simpan-komputer/{id}(id=${k.id})}" class="btn-pilih">Pilih PC Ini</a>
-            
+            <a th:if="${k.status == 'Tersedia'}" th:href="@{/simpan-komputer/{id}(id=${k.id})}" class="btn-pilih">Pilih Unit</a>
             <span th:if="${k.status == 'Terpakai'}" class="btn-disabled">Sedang Digunakan</span>
         </div>
     </div>

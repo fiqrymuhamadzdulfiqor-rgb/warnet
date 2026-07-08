@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Area - CyberNet</title>
+    <title>Member Area - NexaNet Cafe</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -15,12 +15,12 @@
         @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
 
         /* NAVBAR */
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05); position: fixed; top: 0; width: 100%; z-index: 100; }
-        .navbar .logo { font-size: 24px; font-weight: 900; color: #38bdf8; letter-spacing: 1px; text-decoration: none; text-shadow: 0 0 10px rgba(56,189,248,0.5); }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05); position: fixed; top: 0; width: 100%; z-index: 100; }
+        .navbar .logo { font-size: 24px; font-weight: 900; color: white; letter-spacing: 1px; text-decoration: none; }
+        .navbar .logo span { color: #38bdf8; text-shadow: 0 0 15px rgba(56,189,248,0.5); }
         .nav-links { display: flex; align-items: center; gap: 20px; }
-        .nav-links a { text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.3s; }
-        .btn-home { color: #94a3b8; }
-        .btn-home:hover { color: white; }
+        .nav-links a { text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.3s; color: #cbd5e1; }
+        .btn-home:hover { color: #38bdf8; }
         .btn-logout { background: rgba(244, 63, 94, 0.1); color: #f43f5e; padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(244, 63, 94, 0.3); }
         .btn-logout:hover { background: #f43f5e; color: white; box-shadow: 0 0 15px rgba(244, 63, 94, 0.4); }
 
@@ -29,7 +29,7 @@
 
         @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } }
 
-        .glass-card { background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 30px; backdrop-filter: blur(12px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .glass-card { background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 30px; backdrop-filter: blur(15px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
 
         /* PROFILE SECTION */
         .profile-card { text-align: center; }
@@ -77,7 +77,7 @@
 <div class="bg-glow-2"></div>
 
 <nav class="navbar">
-    <a href="/" class="logo">CYBERNET</a>
+    <a href="/" class="logo">Nexa<span>Net</span></a>
     <div class="nav-links">
         <a href="/" class="btn-home">🏠 Beranda Depan</a>
         <a href="/logout" class="btn-logout">Log Out</a>
@@ -96,7 +96,7 @@
             <div class="points-value"><span th:text="${user.point != null ? user.point : 0}">50</span> PTS</div>
         </div>
 
-        <a href="/pilih-komputer" class="btn-action btn-play">🎮 Mulai Main (Pilih PC)</a>
+        <a href="/atur-durasi" class="btn-action btn-play">🎮 Mulai Main (Pilih PC)</a>
         
         <a href="/tukar-poin" class="btn-action btn-secondary">🎁 Tukar Poin Reward</a>
         <a href="/pesan-makan" class="btn-action btn-secondary">🍜 Pesan Makan & Minum</a>
@@ -145,8 +145,8 @@
                         <td style="font-weight: 600;" th:text="${t.komputer.namaKomputer}">PC-01</td>
                         <td th:text="${t.jam} + ' Jam'">2 Jam</td>
                         <td>
-                            <span th:if="${t.komputer.status == 'Dipakai'}" class="status-badge status-jalan">Berjalan</span>
-                            <span th:if="${t.komputer.status != 'Dipakai'}" class="status-badge status-selesai">Selesai</span>
+                            <span th:if="${transaksiAktif != null and t.id == transaksiAktif.id}" class="status-badge status-jalan">Berjalan</span>
+                            <span th:unless="${transaksiAktif != null and t.id == transaksiAktif.id}" class="status-badge status-selesai">Selesai</span>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(transaksiList)}">

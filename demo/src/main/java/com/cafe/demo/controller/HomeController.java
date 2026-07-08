@@ -352,4 +352,24 @@ public class HomeController {
         }
     }
 
+    // ================= ATUR DURASI MAIN (KHUSUS MEMBER) =================
+    @GetMapping("/atur-durasi")
+    public String aturDurasiPage(HttpSession session, Model model) {
+        if(session.getAttribute("user") == null) {
+            return "redirect:/login-member";
+        }
+        
+        // Bawa data user ke halaman agar bisa disapa namanya
+        model.addAttribute("user", session.getAttribute("user"));
+        return "atur-durasi";
+    }
+
+    @PostMapping("/proses-durasi")
+    public String prosesDurasiMember(@RequestParam int durasi, HttpSession session) {
+        // Simpan durasi yang diketik ke memori sementara (Session)
+        session.setAttribute("durasiMain", durasi);
+        
+        // Setelah durasi disimpan, baru arahkan ke halaman pilih komputer
+        return "redirect:/pilih-komputer";
+    }
 }

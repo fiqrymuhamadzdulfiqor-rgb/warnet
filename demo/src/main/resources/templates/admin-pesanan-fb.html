@@ -2,31 +2,35 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Pesanan F&B</title>
+    <title>Pesanan F&B - NexaNet Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
-        body { background: #0f172a; color:white; padding:40px; }
+        body { background: #0f172a; color:white; padding:40px; position: relative; }
         
+        .bg-glow { position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 8s infinite alternate; }
+        .bg-glow-2 { position: fixed; bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 6s infinite alternate-reverse; }
+        @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
+
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .header h1 { color: #38bdf8; font-size: 28px; font-weight: 800; }
+        .header h1 { color: #facc15; font-size: 28px; font-weight: 800; }
         
         .btn-kembali { background: rgba(255,255,255,0.1); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: 0.3s; }
         .btn-kembali:hover { background: rgba(255,255,255,0.2); }
 
-        .card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 25px; overflow-x: auto; }
+        .card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 30px; overflow-x: auto; backdrop-filter: blur(15px); box-shadow:0 20px 40px rgba(0,0,0,0.3); }
         
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
         th { text-align: left; padding: 15px; color: #94a3b8; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid rgba(255,255,255,0.1); }
         td { padding: 15px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        tr:hover td { background: rgba(56,189,248,0.05); }
+        tr:hover td { background: rgba(250, 204, 21, 0.05); }
 
         .badge { padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; }
         .bg-proses { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); }
         .bg-selesai { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
         
-        .btn-selesai { background: #22c55e; color: #064e3b; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 12px; transition: 0.2s; }
-        .btn-selesai:hover { background: #4ade80; }
+        .btn-selesai { background: #22c55e; color: #064e3b; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-weight: 800; font-size: 12px; transition: 0.2s; box-shadow: 0 4px 10px rgba(34,197,94,0.3); }
+        .btn-selesai:hover { background: #4ade80; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(34,197,94,0.5); }
         
         .text-poin { color: #facc15; font-weight: bold; }
         .text-uang { color: #38bdf8; font-weight: bold; }
@@ -34,9 +38,12 @@
 </head>
 <body>
 
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
     <div class="header">
-        <h1>🍜 Daftar Pesanan F&B</h1>
-        <a href="/admin" class="btn-kembali">← Kembali ke Dasbor Admin</a>
+        <h1>🍜 Kasir Pesanan F&B</h1>
+        <a href="/admin" class="btn-kembali">← Kembali ke Dasbor</a>
     </div>
 
     <div class="card">
@@ -44,7 +51,7 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Pemesan (Nama / No PC)</th>
+                    <th>Pemesan</th>
                     <th>Pesanan</th>
                     <th>Jml</th>
                     <th>Total Pembayaran</th>
@@ -56,7 +63,7 @@
             <tbody>
                 <tr th:each="p : ${daftarPesanan}">
                     <td th:text="'#' + ${p.id}">#1</td>
-                    <td style="font-weight: 600;" th:text="${p.pelanggan.nama}">Nama PC</td>
+                    <td style="font-weight: 600; color: white;" th:text="${p.pelanggan.nama}">Nama PC</td>
                     <td th:text="${p.menuFb.namaMenu}">Indomie</td>
                     <td th:text="${p.jumlah}">2</td>
                     
@@ -74,11 +81,11 @@
                     
                     <td>
                         <a th:if="${p.statusPesanan == 'Diproses'}" th:href="@{'/admin/selesaikan-pesanan-fb/' + ${p.id}}" class="btn-selesai" onclick="return confirm('Tandai pesanan ini selesai diantar?')">✔ Selesaikan</a>
-                        <span th:if="${p.statusPesanan == 'Selesai'}" style="color:#64748b; font-size: 12px;">-</span>
+                        <span th:if="${p.statusPesanan == 'Selesai'}" style="color:#64748b; font-size: 12px; font-weight: bold;">SELESAI</span>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(daftarPesanan)}">
-                    <td colspan="8" style="text-align: center; color: #64748b; padding: 30px;">Belum ada pesanan makanan/minuman hari ini.</td>
+                    <td colspan="8" style="text-align: center; color: #64748b; padding: 40px; font-weight: 600;">Belum ada pesanan makanan/minuman hari ini.</td>
                 </tr>
             </tbody>
         </table>
