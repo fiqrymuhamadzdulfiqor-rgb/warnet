@@ -1,55 +1,75 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pilih PC - NexaNet Cafe</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: #0f172a; color: white; min-height: 100vh; padding: 100px 20px; overflow-x: hidden; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
+        body { 
+            background: #0f172a; color: white; min-height: 100vh; 
+            padding: 50px 20px; position: relative; overflow-x: hidden;
+        }
 
-        /* ANIMASI BACKGROUND GLOW */
+        /* ANIMATED BACKGROUND GLOW */
         .bg-glow { position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 8s infinite alternate; }
         .bg-glow-2 { position: fixed; bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 6s infinite alternate-reverse; }
         @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
 
-        .container { max-width: 1100px; margin: auto; animation: slideUp 0.6s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .header-container { max-width: 1200px; margin: 0 auto 40px auto; text-align: center; animation: slideDown 0.6s ease-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         
-        .header { text-align: center; margin-bottom: 50px; }
-        .header h1 { font-size: 40px; font-weight: 900; margin-bottom: 10px; }
-        .header h1 span { color: #38bdf8; text-shadow: 0 0 15px rgba(56,189,248,0.5); }
-        .header p { color: #94a3b8; font-size: 16px; }
+        .header-title { font-size: 32px; font-weight: 900; color: white; margin-bottom: 10px; }
+        .header-title span { color: #38bdf8; }
+        .header-subtitle { color: #94a3b8; font-size: 15px; }
 
-        .pc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .btn-back { display: inline-block; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 10px 20px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 14px; margin-bottom: 30px; transition: 0.3s; }
+        .btn-back:hover { background: rgba(255,255,255,0.1); color: white; border-color: #38bdf8; }
 
+        /* GRID SYSTEM */
+        .pc-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 25px; max-width: 1200px; margin: auto; 
+        }
+
+        /* CARD STYLE */
         .pc-card {
-            background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 20px; padding: 30px; text-align: center; backdrop-filter: blur(12px);
-            transition: 0.4s; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.05); border-radius: 20px;
+            padding: 30px 25px; text-align: center;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
-        .pc-card:hover { border-color: #38bdf8; transform: translateY(-8px); background: rgba(30, 41, 59, 0.8); box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
+        .pc-card:hover { transform: translateY(-10px); border-color: rgba(56,189,248,0.4); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
 
-        .pc-icon { font-size: 50px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(56,189,248,0.3)); }
-        .pc-name { font-size: 20px; font-weight: 900; margin-bottom: 5px; }
-        .pc-price { color: #38bdf8; font-weight: 700; font-size: 15px; margin-bottom: 25px; }
+        /* GRADE HIGHLIGHTS */
+        .grade-badge { position: absolute; top: 15px; right: 15px; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; letter-spacing: 1px; }
+        .grade-vvip { background: linear-gradient(135deg, #facc15, #eab308); color: #422006; box-shadow: 0 4px 10px rgba(250, 204, 21, 0.3); }
+        .grade-vip { background: linear-gradient(135deg, #38bdf8, #0284c7); color: white; box-shadow: 0 4px 10px rgba(56, 189, 248, 0.3); }
+        .grade-reguler { background: rgba(255,255,255,0.1); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.1); }
 
-        /* Badge Status */
-        .status { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 0.5px; }
-        .status.tersedia { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
-        .status.terpakai { background: rgba(244, 63, 94, 0.15); color: #f87171; border: 1px solid rgba(244, 63, 94, 0.3); }
+        /* ICON & TYPOGRAPHY */
+        .pc-icon { font-size: 60px; margin-bottom: 15px; filter: drop-shadow(0 0 15px rgba(255,255,255,0.1)); transition: 0.3s; }
+        .pc-card:hover .pc-icon { filter: drop-shadow(0 0 20px rgba(56,189,248,0.6)); transform: scale(1.1); }
 
-        .btn-pilih {
-            display: block; width: 100%; padding: 14px; background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-            color: #0f172a; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s;
-        }
-        .btn-pilih:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(56,189,248,0.3); filter: brightness(1.1); }
+        .status-badge { display: inline-block; background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 800; margin-bottom: 15px; }
         
-        .btn-disabled {
-            display: block; width: 100%; padding: 14px; background: rgba(255,255,255,0.05);
-            color: #64748b; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; font-weight: 700; cursor: not-allowed;
+        .pc-name { font-size: 24px; font-weight: 900; color: white; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;}
+        .pc-price { color: #94a3b8; font-size: 14px; font-weight: 600; margin-bottom: 25px; }
+        .pc-price span { color: #38bdf8; font-size: 16px; font-weight: 800;}
+
+        /* BUTTON ACTION */
+        .btn-select {
+            display: block; width: 100%; padding: 14px;
+            background: linear-gradient(90deg, #38bdf8, #0ea5e9); color: #0f172a;
+            text-decoration: none; border-radius: 12px; font-weight: 800; font-size: 15px;
+            transition: 0.3s; border: none; cursor: pointer; box-shadow: 0 5px 15px rgba(56,189,248,0.2);
         }
+        .btn-select:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(56,189,248,0.5); filter: brightness(1.1); }
     </style>
 </head>
 <body>
@@ -57,25 +77,40 @@
 <div class="bg-glow"></div>
 <div class="bg-glow-2"></div>
 
-<div class="container">
-    <div class="header">
-        <h1>Pilih <span>PC Pilihanmu</span></h1>
-        <p>Silakan pilih unit komputer yang tersedia untuk mulai bermain.</p>
+<div class="header-container">
+    <a th:href="${session.user != null ? '/member-dashboard' : '/'}" class="btn-back">← Kembali</a>
+    <h1 class="header-title">Pilih <span>Komputer</span> Anda</h1>
+    <p class="header-subtitle">Silakan pilih unit komputer yang tersedia untuk mulai bermain.</p>
+</div>
+
+<div class="pc-grid">
+    <!-- Looping data PC dari Backend -->
+    <div class="pc-card" th:each="k : ${komputerList}">
+        
+        <!-- Badge Grade Komputer -->
+        <div class="grade-badge grade-vvip" th:if="${k.grade == 'VVIP'}">👑 VVIP</div>
+        <div class="grade-badge grade-vip" th:if="${k.grade == 'VIP'}">💎 VIP</div>
+        <div class="grade-badge grade-reguler" th:if="${k.grade == 'Reguler' or k.grade == null}">REGULER</div>
+
+        <div>
+            <div class="pc-icon">🖥️</div>
+            <div class="status-badge">✅ READY</div>
+            <h2 class="pc-name" th:text="${k.namaKomputer}">PC-01</h2>
+            <p class="pc-price">
+                Tarif Dasar: <br>
+                <span th:text="'Rp ' + ${#numbers.formatDecimal(k.tarifPerJam, 0, 'COMMA', 0, 'POINT')} + ' / Jam'"></span>
+            </p>
+        </div>
+
+        <!-- Tombol Pilih PC mengarah ke proses penyimpanan sementara -->
+        <a th:href="@{/simpan-komputer/{id}(id=${k.id})}" class="btn-select">Pilih Unit Ini</a>
     </div>
 
-    <div class="pc-grid">
-        <div th:each="k : ${komputerList}" class="pc-card">
-            <div class="pc-icon">🖥️</div>
-            
-            <div th:if="${k.status == 'Tersedia'}" class="status tersedia">✅ Ready</div>
-            <div th:if="${k.status == 'Terpakai'}" class="status terpakai">❌ In Use</div>
-
-            <h3 class="pc-name" th:text="${k.namaKomputer}">PC-00</h3>
-            <p class="pc-price" th:text="'Rp ' + ${#numbers.formatInteger(k.tarifPerJam, 0, 'POINT')} + ' / jam'"></p>
-            
-            <a th:if="${k.status == 'Tersedia'}" th:href="@{/simpan-komputer/{id}(id=${k.id})}" class="btn-pilih">Pilih Unit</a>
-            <span th:if="${k.status == 'Terpakai'}" class="btn-disabled">Sedang Digunakan</span>
-        </div>
+    <!-- Tampilan jika tidak ada PC yang tersedia -->
+    <div th:if="${#lists.isEmpty(komputerList)}" style="grid-column: 1 / -1; text-align: center; padding: 50px; background: rgba(255,255,255,0.02); border-radius: 20px; border: 1px dashed rgba(255,255,255,0.1);">
+        <div style="font-size: 50px; margin-bottom: 20px;">😭</div>
+        <h3 style="color: white; margin-bottom: 10px;">Maaf, Semua PC Sedang Penuh</h3>
+        <p style="color: #94a3b8;">Silakan tunggu beberapa saat lagi hingga ada unit yang tersedia.</p>
     </div>
 </div>
 

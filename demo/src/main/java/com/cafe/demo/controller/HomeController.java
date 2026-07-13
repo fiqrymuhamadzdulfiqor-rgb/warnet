@@ -2,12 +2,10 @@ package com.cafe.demo.controller;
 
 import com.cafe.demo.model.Komputer;
 import com.cafe.demo.model.Pelanggan;
-import com.cafe.demo.model.Pembayaran;
-import com.cafe.demo.model.Transaksi;
+import com.cafe.demo.model.Reservasi;
 import com.cafe.demo.service.KomputerService;
 import com.cafe.demo.service.PelangganService;
-import com.cafe.demo.service.PembayaranService;
-import com.cafe.demo.service.TransaksiService;
+import com.cafe.demo.service.ReservasiService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -16,7 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List; // TAMBAHAN IMPORT UNTUK LIST TRANSAKSI
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -27,26 +27,19 @@ public class HomeController {
     @Autowired
     private KomputerService komputerService;
 
+    // KITA SEKARANG MENGGUNAKAN RESERVASI SERVICE YANG BARU
     @Autowired
-    private TransaksiService transaksiService;
+    private ReservasiService reservasiService;
 
-    @Autowired
-    private PembayaranService pembayaranService;
-
-    // ================= HOME =================
+    // ================= HOME & FASILITAS =================
 
     @GetMapping("/")
-    public String home() {
-        return "index";
-    }
+    public String home() { return "index"; }
 
-    // ================= FASILITAS =================
     @GetMapping("/fasilitas")
-    public String fasilitasPage() {
-        return "fasilitas"; // Membuka file fasilitas.html
-    }
+    public String fasilitasPage() { return "fasilitas"; }
 
-    // ================= LOGIN ADMIN =================
+    // ================= LOGIN & LOGOUT =================
 
     @GetMapping("/login")
     public String loginPage(HttpSession session) {
@@ -57,11 +50,7 @@ public class HomeController {
     }
 
     @PostMapping("/login")
-    public String loginAdmin(
-            @RequestParam String username,
-            @RequestParam String password,
-            HttpSession session) {
-
+    public String loginAdmin(@RequestParam String username, @RequestParam String password, HttpSession session) {
         if(username.equals("admin") && password.equals("123")) {
             session.setAttribute("adminLogin", true);
             return "redirect:/admin";
@@ -69,64 +58,68 @@ public class HomeController {
         return "redirect:/login?error";
     }
 
-    // ================= LOGOUT =================
-
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        // Menghapus seluruh sesi
         session.invalidate(); 
         return "redirect:/";
     }
 
-    // ================= RESERVASI UMUM =================
+    // ================= RESERVASI & DURASI (MEMBER & UMUM) =================
 
     @GetMapping("/reservasi")
-    public String reservasiPage() {
-        return "reservasi";
-    }
+    public String reservasiPage() { return "reservasi"; }
 
     @PostMapping("/proses-reservasi")
     public String prosesReservasi(
             @RequestParam String nama,
-            @RequestParam int durasi,
+            @RequestParam(defaultValue = "Reguler") String jenisPaket, // TAMBAHAN FITUR PAKET
+            @RequestParam(defaultValue = "1") int durasi,
             HttpSession session) {
         
-        // Cek apakah yang booking ini Member yang sedang login
         Pelanggan pembeli = (Pelanggan) session.getAttribute("user");
         
-        // Jika dia BUKAN member (Pelanggan Umum), buatkan data baru di database
         if (pembeli == null) {
             Pelanggan guest = new Pelanggan();
             guest.setNama(nama);
             guest.setStatus("UMUM");
-            pembeli = pelangganService.save(guest); // Simpan ke database
-            session.setAttribute("guestUser", pembeli); // Ingat dia sebagai Guest
+            pembeli = pelangganService.save(guest); 
+            session.setAttribute("guestUser", pembeli); 
         }
 
-        // Simpan durasi main yang diketik ke memori (akan dipakai saat milih PC)
+        session.setAttribute("jenisPaket", jenisPaket);
         session.setAttribute("durasiMain", durasi);
-        
         return "redirect:/pilih-komputer";
     }
 
-    // ================= LOGIN MEMBER =================
+    @GetMapping("/atur-durasi")
+    public String aturDurasiPage(HttpSession session, Model model) {
+        if(session.getAttribute("user") == null) return "redirect:/login-member";
+        model.addAttribute("user", session.getAttribute("user"));
+        return "atur-durasi";
+    }
+
+    @PostMapping("/proses-durasi")
+    public String prosesDurasiMember(
+            @RequestParam(defaultValue = "Reguler") String jenisPaket,
+            @RequestParam(defaultValue = "1") int durasi, 
+            HttpSession session) {
+            
+        session.setAttribute("jenisPaket", jenisPaket);
+        session.setAttribute("durasiMain", durasi);
+        return "redirect:/pilih-komputer";
+    }
+
+    // ================= MEMBER DASHBOARD =================
 
     @GetMapping("/login-member")
     public String loginMemberPage(HttpSession session) {
-        if (session.getAttribute("user") != null) {
-            return "redirect:/member-dashboard"; 
-        }
+        if (session.getAttribute("user") != null) return "redirect:/member-dashboard"; 
         return "login-member";
     }
 
     @PostMapping("/login-member")
-    public String loginMember(
-            @RequestParam String username,
-            @RequestParam String password,
-            HttpSession session) {
-
+    public String loginMember(@RequestParam String username, @RequestParam String password, HttpSession session) {
         Pelanggan user = pelangganService.loginMember(username, password);
-
         if(user != null) {
             session.setAttribute("user", user);
             return "redirect:/member-dashboard";
@@ -134,12 +127,8 @@ public class HomeController {
         return "redirect:/login-member?error";
     }
 
-    // ================= REGISTER MEMBER =================
-
     @GetMapping("/register-member")
-    public String registerMemberPage() {
-        return "register-member";
-    }
+    public String registerMemberPage() { return "register-member"; }
 
     @PostMapping("/register-member")
     public String registerMember(Pelanggan pelanggan) {
@@ -148,40 +137,36 @@ public class HomeController {
         return "redirect:/login-member";
     }
 
-    // ================= MEMBER DASHBOARD =================
-
     @GetMapping("/member-dashboard")
     public String memberDashboard(HttpSession session, Model model) {
-        Pelanggan user = (Pelanggan) session.getAttribute("user");
+        // 1. Ambil data dari sesi (gunakan nama variabel berbeda agar aman)
+        Pelanggan userSession = (Pelanggan) session.getAttribute("user");
+        if(userSession == null) return "redirect:/login-member";
 
-        if(user == null) {
-            return "redirect:/login-member";
-        }
-
-        // Dapatkan data user terbaru dari DB agar poinnya selalu update
-        user = pelangganService.getById(user.getId());
+        // 2. Ambil data terbaru dari DB dan simpan di variabel user
+        Pelanggan user = pelangganService.getById(userSession.getId());
         model.addAttribute("user", user);
 
-        // Ambil riwayat transaksi
-        List<Transaksi> riwayatTransaksi = transaksiService.getByPelanggan(user);
-        model.addAttribute("transaksiList", riwayatTransaksi);
+        // 3. PERBAIKAN BARIS 145 & 150: Simpan ID ke dalam variabel final agar Java tidak protes
+        final Long userId = user.getId(); 
 
-        // --- LOGIKA MENCARI BILLING AKTIF YANG DITAMBAHKAN ---
-        Transaksi transaksiAktif = null;
-        for (Transaksi t : riwayatTransaksi) {
-            // Jika komputer pada transaksi ini statusnya masih "Dipakai", berarti ini billing yang sedang jalan
-            if (t.getKomputer() != null && "Dipakai".equalsIgnoreCase(t.getKomputer().getStatus())) {
-                transaksiAktif = t;
-                break; // Ketemu yang aktif, langsung stop pencarian
-            }
-        }
+        // 4. Ambil riwayat billing PC (MENGGUNAKAN RESERVASI)
+        List<Reservasi> riwayatReservasi = reservasiService.getAll().stream()
+                .filter(r -> r.getPelanggan() != null && r.getPelanggan().getId().equals(userId))
+                .collect(Collectors.toList());
+        
+        // Tetap menggunakan nama variabel transaksiList agar HTML lamamu tidak error
+        model.addAttribute("transaksiList", riwayatReservasi); 
+
+        Reservasi transaksiAktif = riwayatReservasi.stream()
+                .filter(r -> "Aktif".equalsIgnoreCase(r.getStatusBermain()))
+                .findFirst().orElse(null);
         model.addAttribute("transaksiAktif", transaksiAktif);
-        // ----------------------------------------------------
 
         return "member-dashboard";
     }
 
-    // ================= PILIH KOMPUTER =================
+    // ================= ALUR CHECKOUT & PEMBAYARAN =================
 
     @GetMapping("/pilih-komputer")
     public String pilihKomputer(Model model, HttpSession session) {
@@ -189,103 +174,132 @@ public class HomeController {
             return "redirect:/";
         }
 
-        model.addAttribute("komputerList", komputerService.getAll());
+        model.addAttribute("komputerList", komputerService.getKomputerTersedia()); 
+        
         return "pilih-komputer";
     }
 
-    // ================= CHECKOUT (PILIH PC BARU) =================
-
     @GetMapping("/simpan-komputer/{id}")
     public String simpanKomputer(@PathVariable Long id, HttpSession session) {
-        // Ambil data pelanggan (Member atau Umum)
         Pelanggan pelanggan = (Pelanggan) session.getAttribute("user");
-        if(pelanggan == null) {
-            pelanggan = (Pelanggan) session.getAttribute("guestUser");
+        if(pelanggan == null) pelanggan = (Pelanggan) session.getAttribute("guestUser");
+        if(pelanggan == null) return "redirect:/";
+
+        String jenisPaket = (String) session.getAttribute("jenisPaket");
+        if (jenisPaket == null) jenisPaket = "Reguler";
+        
+        Integer durasi = (Integer) session.getAttribute("durasiMain");
+        if (durasi == null) durasi = 1;
+
+        Komputer komputer = komputerService.getById(id);
+        
+        // BUAT NOTA RESERVASI BARU
+        Reservasi reservasi = new Reservasi();
+        reservasi.setPelanggan(pelanggan);
+        if ("UMUM".equals(pelanggan.getStatus())) {
+            reservasi.setNamaPemesanTamu(pelanggan.getNama());
+        }
+        reservasi.setKomputer(komputer);
+        reservasi.setJenisPaket(jenisPaket);
+        reservasi.setDurasiJam(durasi);
+        reservasi.setWaktuMulai(LocalDateTime.now());
+        reservasi.setStatusBermain("Pending"); // Belum dibayar
+
+        // --- LOGIKA HARGA CERDAS (PAKET vs REGULER BERDASARKAN GRADE) ---
+        double totalHarga = 0;
+        
+        // 1. Cek dulu apa Grade komputernya untuk menentukan biaya tambahan
+        double biayaTambahanGrade = 0;
+        if ("VIP".equalsIgnoreCase(komputer.getGrade())) {
+            biayaTambahanGrade = 10000; // Ekstra 10rb untuk VIP
+        } else if ("VVIP".equalsIgnoreCase(komputer.getGrade())) {
+            biayaTambahanGrade = 20000; // Ekstra 20rb untuk VVIP
         }
         
-        if(pelanggan == null) {
-            return "redirect:/"; // Tendang ke home kalau nyasar
+        // 2. Hitung total harga sesuai jenis paket + biaya grade
+        if ("Paket Malam".equalsIgnoreCase(jenisPaket)) {
+            totalHarga = 30000 + biayaTambahanGrade; 
+        } else if ("Paket Pagi".equalsIgnoreCase(jenisPaket)) {
+            totalHarga = 20000 + biayaTambahanGrade;
+        } else {
+            // Jika Reguler, Tarif Per Jam dikali Durasi (Sudah otomatis menyesuaikan tarif PC masing-masing)
+            totalHarga = komputer.getTarifPerJam() * durasi; 
+        }
+        reservasi.setTotalHarga(totalHarga);
+        // --------------------------------------------------------------
+
+        if ("UMUM".equals(pelanggan.getStatus())) {
+            // Membuat kode acak 6 karakter (Kombinasi huruf dan angka)
+           String generateKode = java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 6).toUpperCase();
+            reservasi.setKodeAkses(generateKode);
+        } else {
+            // Jika member, suruh login pakai akunnya
+            reservasi.setKodeAkses("GUNAKAN AKUN MEMBER");
         }
 
-        // Ambil durasi main yang sudah disimpan dari halaman reservasi tadi
-        Integer durasi = (Integer) session.getAttribute("durasiMain");
-        if (durasi == null) durasi = 1; // Default 1 jam untuk jaga-jaga
-
-        // Proses pembuatan nota Transaksi
-        Komputer komputer = komputerService.getById(id);
-        Transaksi transaksi = new Transaksi();
-        transaksi.setPelanggan(pelanggan);
-        transaksi.setKomputer(komputer);
-        transaksi.setJam(durasi);
-
-        // --- MENGHITUNG HARGA TOTAL ---
-        transaksi.setTarif(komputer.getTarifPerJam()); 
-        transaksi.hitungTotal(); 
-        // ------------------------------
-
-        transaksi = transaksiService.save(transaksi);
-        session.setAttribute("transaksi", transaksi); // Bawa nota ini ke halaman pembayaran
-
+        session.setAttribute("reservasiPending", reservasi);
         return "redirect:/pembayaran";
     }
 
-    // ================= PEMBAYARAN =================
-
     @GetMapping("/pembayaran")
     public String pembayaranPage(Model model, HttpSession session) {
-        Transaksi transaksi = (Transaksi) session.getAttribute("transaksi");
-
-        if(transaksi == null) {
-            return "redirect:/";
-        }
-
-        model.addAttribute("transaksi", transaksi);
+        Reservasi reservasi = (Reservasi) session.getAttribute("reservasiPending");
+        if(reservasi == null) return "redirect:/";
+        
+        // Tetap pakai nama variabel transaksi agar HTML-mu tidak error
+        model.addAttribute("transaksi", reservasi);
         return "pembayaran";
     }
 
     @PostMapping("/pembayaran")
-    public String prosesPembayaran(@RequestParam String metode, HttpSession session) {
-        // 1. Ambil transaksi dari sesi
-        Transaksi transaksi = (Transaksi) session.getAttribute("transaksi");
+    public String prosesPembayaran(HttpSession session) {
+        Reservasi reservasi = (Reservasi) session.getAttribute("reservasiPending");
+        if(reservasi == null) return "redirect:/member-dashboard";
 
-        // 2. JIKA TERJADI DOUBLE-CLICK, PERINTAH KEDUA AKAN LANGSUNG KENA BLOK DI SINI
-        if(transaksi == null) {
-            return "redirect:/member-dashboard";
-        }
+        session.removeAttribute("reservasiPending");
 
-        // --- PINDAHKAN HAPUS SESI KE BARIS ATAS SINI (KUNCI ANTI-DOBEL) ---
-        session.removeAttribute("transaksi");
-        session.setAttribute("transaksiSelesai", transaksi);
-        // ------------------------------------------------------------------
+        // 1. Ubah status PC menjadi Dipakai
+        Komputer pc = reservasi.getKomputer();
+        pc.setStatus("Dipakai");
+        komputerService.save(pc);
 
-        // 3. Simpan data pembayaran ke database
-        Pembayaran pembayaran = new Pembayaran();
-        pembayaran.setMetode(metode);
-        pembayaran.setJumlahBayar(transaksi.getTotal());
-        pembayaran.setTransaksi(transaksi);
-        pembayaranService.save(pembayaran);
+        // 2. Aktifkan Billing
+        reservasi.setStatusBermain("Aktif");
 
-        // 4. Update poin member
-        if(session.getAttribute("user") != null){
-            Pelanggan user = (Pelanggan) session.getAttribute("user");
-            user = pelangganService.getById(user.getId());
+        // ==============================================================
+        // FITUR BARU: POIN LANGSUNG CAIR SAAT PEMBAYARAN SUKSES!
+        // ==============================================================
+        Pelanggan userSession = (Pelanggan) session.getAttribute("user");
+        if (userSession != null && !reservasi.isPoinSudahDiklaim()) {
+            // Ambil data user terbaru dari database
+            Pelanggan user = pelangganService.getById(userSession.getId());
             
-            int poinTambahan = transaksi.getJam() * 10; 
-            int poinSekarang = user.getPoint();
-
-            // Log CCTV tetap dipertahankan untuk memantau
-            System.out.println("=== LAPORAN DEBUG POIN ===");
-            System.out.println("Jam Bermain: " + transaksi.getJam());
-            System.out.println("Poin Sebelumnya: " + poinSekarang);
-            System.out.println("Poin yang Ditambahkan: " + poinTambahan);
-            System.out.println("==========================");
-
-            user.setPoint(poinSekarang + poinTambahan);
-            pelangganService.save(user); 
+            // Tentukan Poin Dasar berdasarkan Grade PC
+            int poinBase = 5; // Default Reguler
+            if ("VVIP".equalsIgnoreCase(pc.getGrade())) {
+                poinBase = 10;
+            } else if ("VIP".equalsIgnoreCase(pc.getGrade())) {
+                poinBase = 8;
+            }
+            
+            // Total Poin = Poin Grade PC dikali Durasi Main
+            int totalPoinDidapat = poinBase * reservasi.getDurasiJam();
+            
+            // Suntikkan poinnya ke akun member
+            user.setPoint(user.getPoint() + totalPoinDidapat);
+            pelangganService.save(user);
+            
+            // Update session agar poin di layar (dashboard) langsung berubah
             session.setAttribute("user", user); 
+            
+            // KUNCI: Tandai poin sudah diklaim agar tidak dobel saat Admin klik "Stop"
+            reservasi.setPoinSudahDiklaim(true);
         }
+        // ==============================================================
 
-        // 5. Langsung redirect (baris hapus session yang di bawah sudah dibuang karena pindah ke atas)
+        reservasiService.save(reservasi);
+        session.setAttribute("reservasiSelesai", reservasi);
+
         if(session.getAttribute("user") != null){
             return "redirect:/member-dashboard";
         }
@@ -293,83 +307,38 @@ public class HomeController {
         return "redirect:/transaksi-selesai";
     }
 
-    // ================= TRANSAKSI SELESAI =================
-
     @GetMapping("/transaksi-selesai")
     public String transaksiSelesai(HttpSession session, Model model) {
-        Transaksi transaksi = (Transaksi) session.getAttribute("transaksiSelesai");
-
-        if(transaksi == null){
-            return "redirect:/";
-        }
-
-        model.addAttribute("transaksi", transaksi);
+        Reservasi reservasi = (Reservasi) session.getAttribute("reservasiSelesai");
+        if(reservasi == null) return "redirect:/";
+        
+        model.addAttribute("transaksi", reservasi); // Tetap pakai variabel transaksi
         return "transaksi-selesai";
     }
 
-    // 1. Menampilkan Halaman Tukar Poin
+    // ================= TUKAR POIN =================
     @GetMapping("/tukar-poin")
     public String halamanTukarPoin(Model model, HttpSession session) {
-        // Pastikan yang akses hanya member yang sudah login
-        if(session.getAttribute("user") == null){
-            return "redirect:/";
-        }
-        
-        Pelanggan user = (Pelanggan) session.getAttribute("user");
-        // Ambil data terbaru dari database biar poinnya akurat
-        user = pelangganService.getById(user.getId()); 
-        
+        if(session.getAttribute("user") == null) return "redirect:/";
+        Pelanggan user = pelangganService.getById(((Pelanggan) session.getAttribute("user")).getId()); 
         model.addAttribute("user", user);
-        return "tukar-poin"; // Kita akan buat file tukar-poin.html setelah ini
+        return "tukar-poin";
     }
 
-    // 2. Memproses Penukaran Poin
     @PostMapping("/proses-tukar-poin")
     public String prosesTukarPoin(@RequestParam String hadiah, @RequestParam int hargaPoin, HttpSession session, Model model) {
-        if(session.getAttribute("user") == null){
-            return "redirect:/";
-        }
+        if(session.getAttribute("user") == null) return "redirect:/";
+        Pelanggan user = pelangganService.getById(((Pelanggan) session.getAttribute("user")).getId());
 
-        Pelanggan user = (Pelanggan) session.getAttribute("user");
-        user = pelangganService.getById(user.getId()); // Update data terbaru
-
-        // Cek apakah poinnya cukup?
         if (user.getPoint() >= hargaPoin) {
-            // Poin cukup -> Kurangi poin
             user.setPoint(user.getPoint() - hargaPoin);
-            pelangganService.save(user); // Simpan sisa poin ke database
-            
-            session.setAttribute("user", user); // Update sesi
-            
-            // Catatan: Di sini kamu juga bisa nge-save ke tabel 'RiwayatPenukaran' kalau ada
-            
+            pelangganService.save(user); 
+            session.setAttribute("user", user); 
             return "redirect:/member-dashboard?sukses=tukar"; 
         } else {
-            // Poin kurang -> Kembalikan ke halaman tukar poin dengan pesan error
-            model.addAttribute("error", "Maaf, poin kamu tidak cukup untuk menukar " + hadiah);
+            model.addAttribute("error", "Maaf, poin kamu tidak cukup!");
             model.addAttribute("user", user);
             return "tukar-poin";
         }
-    }
-
-    // ================= ATUR DURASI MAIN (KHUSUS MEMBER) =================
-    @GetMapping("/atur-durasi")
-    public String aturDurasiPage(HttpSession session, Model model) {
-        if(session.getAttribute("user") == null) {
-            return "redirect:/login-member";
-        }
-        
-        // Bawa data user ke halaman agar bisa disapa namanya
-        model.addAttribute("user", session.getAttribute("user"));
-        return "atur-durasi";
-    }
-
-    @PostMapping("/proses-durasi")
-    public String prosesDurasiMember(@RequestParam int durasi, HttpSession session) {
-        // Simpan durasi yang diketik ke memori sementara (Session)
-        session.setAttribute("durasiMain", durasi);
-        
-        // Setelah durasi disimpan, baru arahkan ke halaman pilih komputer
-        return "redirect:/pilih-komputer";
     }
 }

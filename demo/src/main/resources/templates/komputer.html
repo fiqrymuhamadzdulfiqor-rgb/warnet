@@ -25,12 +25,18 @@
 
         /* FORM STYLE */
         form {
-            display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 15px; align-items: center;
+            display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: 15px; align-items: center;
             background: rgba(15, 23, 42, 0.5); padding: 20px; border-radius: 16px; margin-bottom: 30px;
             border: 1px solid rgba(255,255,255,0.05);
         }
-        input { padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; outline: none; width: 100%; font-size: 14px;}
-        input:focus { border-color: #38bdf8; }
+        
+        /* CSS Ditambahkan select agar gaya input teks dan dropdown seragam */
+        input, select { padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; outline: none; width: 100%; font-size: 14px;}
+        input:focus, select:focus { border-color: #38bdf8; }
+        
+        /* Agar pilihan dropdown tidak transparan dan mudah dibaca */
+        select option { background: #1e293b; color: white; }
+
         button { background: linear-gradient(90deg, #38bdf8, #0ea5e9); color: #0f172a; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 800; cursor: pointer; transition: 0.3s; }
         button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(56,189,248,0.4); }
 
@@ -42,6 +48,11 @@
 
         .status-tersedia { color: #4ade80; font-weight: 600; }
         .status-dipakai { color: #f43f5e; font-weight: 600; }
+
+        /* GRADE COLORS */
+        .grade-vvip { color: #fbbf24; font-weight: 700; } /* Emas */
+        .grade-vip { color: #60a5fa; font-weight: 700; } /* Biru Muda */
+        .grade-reguler { color: #94a3b8; font-weight: 600; } /* Abu-abu */
 
         /* ACTIONS ACTION BUTTONS */
         .action-link { text-decoration: none; font-size: 13px; font-weight: 600; margin-right: 15px; }
@@ -68,11 +79,20 @@
         <a href="/admin" class="back-btn">← Kembali ke Dashboard</a>
     </div>
 
+    <!-- FITUR BARU: Penambahan form select untuk Grade -->
     <form action="/save-komputer" method="post">
         <input type="hidden" name="id" th:value="${komputer.id}">
         <input type="hidden" name="status" th:value="${komputer.status != null ? komputer.status : 'Tersedia'}">
 
         <input type="text" name="namaKomputer" placeholder="Nama Komputer (Contoh: PC-01)" th:value="${komputer.namaKomputer}" required>
+        
+        <select name="grade" required>
+            <option value="" disabled th:selected="${komputer.grade == null}">Pilih Grade...</option>
+            <option value="Reguler" th:selected="${komputer.grade == 'Reguler'}">Reguler</option>
+            <option value="VIP" th:selected="${komputer.grade == 'VIP'}">VIP</option>
+            <option value="VVIP" th:selected="${komputer.grade == 'VVIP'}">VVIP</option>
+        </select>
+
         <input type="number" name="tarifPerJam" placeholder="Tarif Per Jam (Rp)" th:value="${komputer.tarifPerJam}" required>
         
         <button type="submit">💾 Simpan PC</button>
@@ -82,6 +102,7 @@
         <tr>
             <th>ID</th>
             <th>Nama Komputer</th>
+            <th>Grade</th> <!-- Tambahan Judul Kolom -->
             <th>Status PC</th>
             <th>Tarif / Jam</th>
             <th>Aksi Kontrol</th>
@@ -90,6 +111,14 @@
         <tr th:each="k : ${komputerList}">
             <td th:text="${k.id}"></td>
             <td th:text="${k.namaKomputer}" style="font-weight: 600; color: white;"></td>
+            
+            <!-- FITUR BARU: Menampilkan data Grade dengan warna yang sesuai -->
+            <td>
+                <span th:if="${k.grade == 'VVIP'}" class="grade-vvip">VVIP</span>
+                <span th:if="${k.grade == 'VIP'}" class="grade-vip">VIP</span>
+                <span th:if="${k.grade == 'Reguler' or k.grade == null}" class="grade-reguler">Reguler</span>
+            </td>
+
             <td>
                 <span th:if="${k.status == 'Tersedia'}" class="status-tersedia">🟢 Tersedia</span>
                 <span th:if="${k.status == 'Dipakai'}" class="status-dipakai">🔴 Dipakai</span>

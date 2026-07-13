@@ -3,6 +3,7 @@ package com.cafe.demo.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "komputer")
 public class Komputer {
 
     @Id
@@ -11,9 +12,13 @@ public class Komputer {
 
     private String namaKomputer;
 
-    private String status;
+    // Default otomatis Kosong saat PC baru didaftarkan
+    private String status = "Tersedia"; 
 
     private double tarifPerJam;
+
+    // === TAMBAHAN BARU: Klasifikasi PC ===
+    private String grade; // Nanti isinya: Reguler, VIP, VVIP
 
     public Komputer() {
     }
@@ -48,5 +53,13 @@ public class Komputer {
 
     public void setTarifPerJam(double tarifPerJam) {
         this.tarifPerJam = tarifPerJam;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
     }
 }

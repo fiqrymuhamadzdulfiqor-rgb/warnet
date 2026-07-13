@@ -1,45 +1,54 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking PC - CyberNet</title>
+    <title>Reservasi PC - NexaNet Cafe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: #0f172a; color: white; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-
-        .bg-glow { position: fixed; top: -20%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%); z-index: -1; filter: blur(50px); }
-        .bg-glow-2 { position: fixed; bottom: -20%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(250,204,21,0.1) 0%, transparent 70%); z-index: -1; filter: blur(50px); }
-
-        .form-container {
-            width: 100%; max-width: 500px; background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(15px);
-            border: 1px solid rgba(56,189,248,0.15); border-radius: 24px; padding: 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        * { font-family: 'Inter', sans-serif; }
+        body { 
+            background: #0f172a; color: white; min-height: 100vh; 
+            display: flex; align-items: center; position: relative; overflow-x: hidden; padding: 40px 0;
         }
 
-        .header-title { text-align: center; margin-bottom: 30px; }
-        .header-title h1 { font-size: 28px; font-weight: 900; color: white; margin-bottom: 5px; }
-        .header-title p { color: #94a3b8; font-size: 14px; }
+        /* ANIMATED BACKGROUND GLOW */
+        .bg-glow { position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 8s infinite alternate; }
+        .bg-glow-2 { position: fixed; bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 6s infinite alternate-reverse; }
+        @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
 
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; color: #cbd5e1; font-weight: 600; margin-bottom: 8px; }
+        /* GLASS CARD */
+        .glass-card { 
+            background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.6s ease-out; padding: 40px;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* CUSTOM INPUTS */
+        .custom-input { 
+            background: rgba(15, 23, 42, 0.6) !important; color: white !important; 
+            border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 12px; 
+            transition: 0.3s;
+        }
+        .custom-input:focus { border-color: #38bdf8 !important; box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25) !important; }
         
-        input, select {
-            width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; font-size: 15px; transition: 0.3s;
-        }
-        input:focus, select:focus { outline: none; border-color: #38bdf8; background: rgba(15, 23, 42, 0.9); }
-        select option { background: #0f172a; color: white; }
+        .text-accent { color: #38bdf8; }
+        .icon-glow { filter: drop-shadow(0 0 15px rgba(56,189,248,0.4)); }
 
-        .btn-submit {
-            width: 100%; padding: 16px; background: #38bdf8; color: #0f172a; border: none;
-            border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 10px;
+        /* BUTTONS */
+        .btn-primary-custom { 
+            background: linear-gradient(90deg, #38bdf8, #0ea5e9); color: #0f172a; 
+            border: none; border-radius: 12px; font-weight: 900; padding: 14px;
+            transition: 0.3s; box-shadow: 0 10px 20px rgba(56,189,248,0.2);
         }
-        .btn-submit:hover { background: #0ea5e9; box-shadow: 0 10px 25px rgba(56,189,248,0.4); transform: translateY(-2px); }
-
-        .back-home { display: block; text-align: center; margin-top: 20px; color: #94a3b8; text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s; }
-        .back-home:hover { color: white; }
+        .btn-primary-custom:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(56,189,248,0.4); filter: brightness(1.1); }
+        
+        .btn-cancel { color: #94a3b8; text-decoration: none; font-weight: 600; display: block; text-align: center; margin-top: 15px; transition: 0.3s; }
+        .btn-cancel:hover { color: #f43f5e; }
     </style>
 </head>
 <body>
@@ -47,33 +56,70 @@
 <div class="bg-glow"></div>
 <div class="bg-glow-2"></div>
 
-<div class="form-container">
-    <div class="header-title">
-        <h1>🎟️ Tiket Reservasi PC</h1>
-        <p>Isi data untuk melanjutkan ke pemilihan komputer</p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="glass-card">
+                <div class="text-center mb-4">
+                    <i class="bi bi-display text-accent icon-glow" style="font-size: 3rem;"></i>
+                    <h3 class="fw-bold mt-2" style="color: white;">Reservasi PC Umum</h3>
+                    <p class="text-muted" style="color: #94a3b8 !important;">Isi data dirimu untuk mulai bermain</p>
+                </div>
+
+                <form th:action="@{/proses-reservasi}" method="post">
+                    <!-- Nama -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted" style="font-size: 12px; text-transform: uppercase;">Nama Pemain</label>
+                        <input type="text" name="nama" class="form-control form-control-lg custom-input" placeholder="Masukkan nama..." required>
+                    </div>
+
+                    <!-- Dropdown Jenis Paket -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted" style="font-size: 12px; text-transform: uppercase;">Pilih Paket</label>
+                        <select name="jenisPaket" id="paketUmum" class="form-select form-select-lg custom-input" onchange="cekPaketUmum()" required>
+                            <option value="Reguler">Reguler (Sesuai Tarif PC / Jam)</option>
+                            <option value="Paket Pagi">Paket Pagi (Mulai Rp 20.000)</option>
+                            <option value="Paket Malam">Paket Malam (Mulai Rp 30.000)</option>
+                        </select>
+                        <small class="text-danger mt-2 d-block" style="font-size: 11px;">
+                            *Harga di atas adalah harga dasar PC Reguler.
+                        </small>
+                    </div>
+
+                    <!-- Durasi Jam -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-muted" style="font-size: 12px; text-transform: uppercase;">Durasi Main (Jam)</label>
+                        <input type="number" name="durasi" id="durasiUmum" class="form-control form-control-lg custom-input" min="1" value="1" required>
+                        <small class="text-muted mt-2 d-block" id="infoDurasiUmum" style="font-size: 12px; color: #94a3b8 !important;">
+                            <i class="bi bi-info-circle"></i> Tentukan berapa lama kamu ingin main.
+                        </small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-custom w-100">Lanjut Pilih PC <i class="bi bi-arrow-right ms-2"></i></button>
+                    <a href="/" class="btn-cancel">Kembali ke Home</a>
+                </form>
+            </div>
+        </div>
     </div>
-
-    <form action="/proses-reservasi" method="post" th:object="${reservasi}">
-        <div class="form-group">
-            <label>Nama Pemain (In-Game Name)</label>
-            <input type="text" name="nama" th:value="${session.user != null ? session.user.nama : ''}" placeholder="Ketik nama kamu..." required>
-        </div>
-
-        <div class="form-group">
-            <label>Rencana Durasi Main (Jam)</label>
-            <input type="number" name="durasi" placeholder="Contoh: 2" min="1" required>
-        </div>
-
-        <div class="form-group">
-            <label>Waktu Kedatangan</label>
-            <input type="datetime-local" name="waktuBooking" required>
-        </div>
-
-        <button type="submit" class="btn-submit">Lanjut Pilih PC →</button>
-    </form>
-    
-    <a href="/" class="back-home">Batalkan & Kembali</a>
 </div>
 
+<script>
+    function cekPaketUmum() {
+        let pilihan = document.getElementById("paketUmum").value;
+        let inputDurasi = document.getElementById("durasiUmum");
+        let teksInfo = document.getElementById("infoDurasiUmum");
+
+        if (pilihan !== "Reguler") {
+            inputDurasi.value = 1;
+            inputDurasi.readOnly = true;
+            inputDurasi.style.backgroundColor = "rgba(56,189,248,0.1)";
+            teksInfo.innerHTML = '<i class="bi bi-shield-check text-success"></i> Durasi diabaikan (Paket Sepuasnya).';
+        } else {
+            inputDurasi.readOnly = false;
+            inputDurasi.style.backgroundColor = "transparent";
+            teksInfo.innerHTML = '<i class="bi bi-info-circle"></i> Tentukan berapa lama kamu ingin main.';
+        }
+    }
+</script>
 </body>
 </html>

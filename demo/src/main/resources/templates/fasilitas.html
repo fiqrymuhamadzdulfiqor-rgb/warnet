@@ -1,59 +1,87 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fasilitas & Grade - NexaNet Cafe</title>
+    <title>Fasilitas & Harga - NexaNet Cafe</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: #0f172a; color: white; min-height: 100vh; overflow-x: hidden; padding-bottom: 50px; }
+        body { background: #0f172a; color: white; min-height: 100vh; overflow-x: hidden; padding-bottom: 70px; }
 
         .bg-glow { position: fixed; top: -20%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 8s infinite alternate; }
         .bg-glow-2 { position: fixed; bottom: -20%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 6s infinite alternate-reverse; }
         @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
 
         /* HEADER */
-        .header-section { text-align: center; padding: 80px 20px 40px; }
+        .header-section { text-align: center; padding: 80px 20px 40px; animation: fadeInDown 0.8s ease-out; }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        
         .header-section h1 { font-size: 48px; font-weight: 900; color: white; letter-spacing: -1px; margin-bottom: 15px; }
         .header-section h1 span { color: #38bdf8; text-shadow: 0 0 20px rgba(56,189,248,0.4); }
-        .header-section p { color: #94a3b8; font-size: 18px; max-width: 600px; margin: auto; line-height: 1.6; }
+        .header-section p { color: #94a3b8; font-size: 16px; max-width: 600px; margin: auto; line-height: 1.6; }
 
-        /* CONTAINER GRID */
-        .fasilitas-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        /* CONTAINER GRID PC */
+        .fasilitas-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
 
         /* CARD STYLE */
         .grade-card { 
-            background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); 
-            border-radius: 24px; padding: 40px 30px; backdrop-filter: blur(12px); 
-            transition: 0.4s; position: relative; overflow: hidden;
+            background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05); 
+            border-radius: 24px; padding: 40px 30px; backdrop-filter: blur(15px); 
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
-        .grade-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; }
+        .grade-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; transition: 0.4s; }
         
-        .card-regular::before { background: #38bdf8; box-shadow: 0 0 15px #38bdf8; }
-        .card-vip::before { background: #8b5cf6; box-shadow: 0 0 15px #8b5cf6; }
-        .card-vvip::before { background: #facc15; box-shadow: 0 0 15px #facc15; }
+        .card-regular::before { background: #38bdf8; box-shadow: 0 0 20px #38bdf8; }
+        .card-vip::before { background: #a855f7; box-shadow: 0 0 20px #a855f7; }
+        .card-vvip::before { background: #facc15; box-shadow: 0 0 20px #facc15; }
 
-        .grade-card:hover { transform: translateY(-10px); background: rgba(30, 41, 59, 0.7); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .grade-card:hover { transform: translateY(-12px); background: rgba(30, 41, 59, 0.8); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        .card-regular:hover { border-color: rgba(56,189,248,0.3); }
+        .card-vip:hover { border-color: rgba(168,85,247,0.3); }
+        .card-vvip:hover { border-color: rgba(250,204,21,0.3); }
         
-        .lantai-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 800; letter-spacing: 1px; margin-bottom: 20px; }
+        .lantai-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 20px; text-transform: uppercase; }
         .badge-regular { background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); }
-        .badge-vip { background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3); }
+        .badge-vip { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
         .badge-vvip { background: rgba(250,204,21,0.15); color: #facc15; border: 1px solid rgba(250,204,21,0.3); }
 
-        .grade-title { font-size: 32px; font-weight: 900; margin-bottom: 10px; }
-        .grade-desc { color: #94a3b8; font-size: 14px; margin-bottom: 30px; line-height: 1.5; }
+        .grade-title { font-size: 32px; font-weight: 900; margin-bottom: 10px; text-transform: uppercase;}
+        .grade-desc { color: #94a3b8; font-size: 14px; margin-bottom: 30px; line-height: 1.6; }
 
-        .specs-list { list-style: none; margin-bottom: 30px; }
-        .specs-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; color: #e2e8f0; font-size: 15px; font-weight: 600; }
-        .specs-list li .icon { font-size: 18px; }
+        .specs-list { list-style: none; margin-bottom: 20px; }
+        .specs-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; color: #e2e8f0; font-size: 14px; font-weight: 600; }
+        .specs-list li .icon { font-size: 18px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
 
-        .nav-buttons { text-align: center; margin-top: 60px; display: flex; justify-content: center; gap: 20px; }
-        .btn { padding: 14px 28px; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s; }
+        /* BAGIAN HARGA PAKET */
+        .pricing-section { max-width: 1000px; margin: 60px auto 0; padding: 0 20px; animation: fadeInUp 1s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .pricing-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 40px;
+            backdrop-filter: blur(20px); box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .pricing-title { text-align: center; font-size: 24px; font-weight: 900; color: white; margin-bottom: 30px; display: flex; justify-content: center; align-items: center; gap: 10px;}
+        
+        .pricing-table-wrapper { overflow-x: auto; }
+        .pricing-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .pricing-table th { background: rgba(255,255,255,0.03); color: #94a3b8; padding: 15px; text-align: left; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid rgba(255,255,255,0.1); }
+        .pricing-table td { padding: 20px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: white; font-weight: 700; font-size: 15px;}
+        .pricing-table tr:hover td { background: rgba(56,189,248,0.05); }
+        
+        .pack-name { color: #38bdf8; font-size: 16px; }
+        .pack-desc { display: block; font-size: 12px; color: #64748b; font-weight: 400; margin-top: 5px; }
+
+        /* BUTTONS */
+        .nav-buttons { text-align: center; margin-top: 50px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
+        .btn { padding: 15px 30px; border-radius: 14px; font-weight: 800; font-size: 15px; text-decoration: none; transition: 0.3s; }
         .btn-home { background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); }
-        .btn-home:hover { background: rgba(255,255,255,0.1); }
+        .btn-home:hover { background: rgba(255,255,255,0.1); border-color: #38bdf8; }
         .btn-book { background: linear-gradient(90deg, #38bdf8, #0ea5e9); color: #0f172a; box-shadow: 0 10px 20px rgba(56,189,248,0.2); }
-        .btn-book:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(56,189,248,0.4); }
+        .btn-book:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(56,189,248,0.4); filter: brightness(1.1); }
     </style>
 </head>
 <body>
@@ -63,13 +91,13 @@
 
 <div class="header-section">
     <h1>Fasilitas <span>NexaNet</span></h1>
-    <p>Kami menghadirkan 3 tingkatan area bermain eksklusif yang dirancang khusus untuk kenyamanan dan kebutuhan gaming Anda.</p>
+    <p>3 Tingkatan area bermain eksklusif dengan penyesuaian harga paket yang transparan untuk kebutuhan gaming Anda.</p>
 </div>
 
 <div class="fasilitas-container">
     <div class="grade-card card-regular">
         <div class="lantai-badge badge-regular">LANTAI 3</div>
-        <h2 class="grade-title">REGULAR</h2>
+        <h2 class="grade-title">REGULER</h2>
         <p class="grade-desc">Area Open Space yang cocok untuk mabar seru bareng teman-teman squad Anda dengan budget bersahabat.</p>
         <ul class="specs-list">
             <li><span class="icon">🖥️</span> Monitor 24" IPS 144Hz</li>
@@ -90,7 +118,6 @@
             <li><span class="icon">🎮</span> VGA RTX 4070 12GB</li>
             <li><span class="icon">🪑</span> Kursi Gaming Premium Ergonomis</li>
             <li><span class="icon">🎧</span> Headset HyperX Cloud II</li>
-            <li><span class="icon">❄️</span> Ruangan Bebas Asap Rokok</li>
         </ul>
     </div>
 
@@ -103,15 +130,65 @@
             <li><span class="icon">⚙️</span> Intel Core i9 14th Gen</li>
             <li><span class="icon">🎮</span> VGA RTX 4090 24GB</li>
             <li><span class="icon">🪑</span> Sofa Gaming Kulit Super Empuk</li>
-            <li><span class="icon">🎙️</span> Setup Mic Streamer & Webcam 4K</li>
             <li><span class="icon">☕</span> Gratis 1 Minuman Dingin Premium</li>
         </ul>
     </div>
 </div>
 
+<!-- SECTION BARU: INFORMASI HARGA PAKET -->
+<div class="pricing-section">
+    <div class="pricing-card">
+        <h3 class="pricing-title">💸 Informasi Harga & Paket Billing</h3>
+        <div class="pricing-table-wrapper">
+            <table class="pricing-table">
+                <thead>
+                    <tr>
+                        <th>Jenis Layanan</th>
+                        <th style="color: #38bdf8;">PC REGULER</th>
+                        <th style="color: #c084fc;">PC VIP <span style="font-size: 10px; background: rgba(192, 132, 252, 0.2); padding: 3px 6px; border-radius: 4px; margin-left: 5px;">+10K</span></th>
+                        <th style="color: #facc15;">PC VVIP <span style="font-size: 10px; background: rgba(250, 204, 21, 0.2); padding: 3px 6px; border-radius: 4px; margin-left: 5px;">+20K</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="pack-name">Paket Per Jam</span>
+                            <span class="pack-desc">Tersedia untuk Tamu & Member (Dapat Poin)</span>
+                        </td>
+                        <td>Sesuai Tarif PC</td>
+                        <td>Sesuai Tarif PC</td>
+                        <td>Sesuai Tarif PC</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="pack-name">Paket Pagi</span>
+                            <span class="pack-desc">Main sepuasnya (Khusus Tamu Umum)</span>
+                        </td>
+                        <td>Rp 20.000</td>
+                        <td>Rp 30.000</td>
+                        <td>Rp 40.000</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="pack-name">Paket Malam</span>
+                            <span class="pack-desc">Main sepuasnya (Khusus Tamu Umum)</span>
+                        </td>
+                        <td>Rp 30.000</td>
+                        <td>Rp 40.000</td>
+                        <td>Rp 50.000</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p style="margin-top: 20px; font-size: 13px; color: #64748b; text-align: center; font-style: italic;">
+            *Catatan: Member diwajibkan menggunakan Paket Per Jam agar sistem Poin Reward tetap terakumulasi ke dalam akun.
+        </p>
+    </div>
+</div>
+
 <div class="nav-buttons">
     <a href="/" class="btn btn-home">← Kembali ke Beranda</a>
-    <a href="/reservasi" class="btn btn-book">Booking PC Sekarang 🚀</a>
+    <a href="/pilih-komputer" class="btn btn-book">Booking PC Sekarang 🚀</a>
 </div>
 
 </body>

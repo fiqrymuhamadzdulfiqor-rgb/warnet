@@ -118,12 +118,13 @@
                     <b style="font-size: 18px; color: white;" th:text="${transaksiAktif.komputer.namaKomputer}">PC-00</b>
                 </div>
                 <div>
-                    <p style="color: #94a3b8; font-size: 12px; font-weight: 600;">DURASI</p>
-                    <b style="font-size: 18px; color: white;" th:text="${transaksiAktif.jam} + ' Jam'">0 Jam</b>
+                    <p style="color: #94a3b8; font-size: 12px; font-weight: 600;">PAKET / DURASI</p>
+                    <!-- PERBAIKAN: Menampilkan jenis paket dan durasi jam yang benar -->
+                    <b style="font-size: 16px; color: white;" th:text="${transaksiAktif.jenisPaket} + ' (' + ${transaksiAktif.durasiJam} + ' Jam)'">Reguler (0 Jam)</b>
                 </div>
                 <div>
-                    <p style="color: #94a3b8; font-size: 12px; font-weight: 600;">KODE AKSES</p>
-                    <b style="font-size: 18px; color: #38bdf8; letter-spacing: 2px;" th:text="${transaksiAktif.kodeAkses}">XXXXXX</b>
+                    <p style="color: #94a3b8; font-size: 12px; font-weight: 600;">INFO AKSES</p>
+                    <b style="font-size: 14px; color: #38bdf8; letter-spacing: 1px;" th:text="${transaksiAktif.kodeAkses}">AKUN MEMBER</b>
                 </div>
             </div>
             <p style="margin-top: 15px; font-size: 12px; color: #94a3b8; font-style: italic;">*Status ini akan otomatis berpindah ke riwayat setelah waktu habis atau diselesaikan Admin.</p>
@@ -136,14 +137,17 @@
                 <thead>
                     <tr>
                         <th>Komputer</th>
-                        <th>Durasi</th>
+                        <th>Paket & Durasi</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="t : ${transaksiList}">
                         <td style="font-weight: 600;" th:text="${t.komputer.namaKomputer}">PC-01</td>
-                        <td th:text="${t.jam} + ' Jam'">2 Jam</td>
+                        
+                        <!-- PERBAIKAN: Menyesuaikan tampilan durasi di tabel riwayat -->
+                        <td th:text="${t.jenisPaket} + ' (' + ${t.durasiJam} + ' Jam)'">Reguler (2 Jam)</td>
+                        
                         <td>
                             <span th:if="${transaksiAktif != null and t.id == transaksiAktif.id}" class="status-badge status-jalan">Berjalan</span>
                             <span th:unless="${transaksiAktif != null and t.id == transaksiAktif.id}" class="status-badge status-selesai">Selesai</span>

@@ -1,77 +1,125 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Set Durasi - NexaNet Cafe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atur Paket - NexaNet Cafe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        * { font-family: 'Inter', sans-serif; }
         body { 
             background: #0f172a; color: white; min-height: 100vh; 
-            display: flex; justify-content: center; align-items: center; padding: 20px;
+            display: flex; align-items: center; position: relative; overflow-x: hidden;
         }
-        
-        /* ANIMASI BACKGROUND GLOW */
+
+        /* ANIMATED BACKGROUND GLOW */
         .bg-glow { position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 8s infinite alternate; }
         .bg-glow-2 { position: fixed; bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 6s infinite alternate-reverse; }
         @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
 
-        .card {
-            background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.05);
-            padding: 40px; width: 100%; max-width: 450px; text-align: center;
-            backdrop-filter: blur(15px); border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            animation: slideUp 0.5s ease-out;
+        /* GLASS CARD */
+        .glass-card { 
+            background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.6s ease-out;
         }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        .icon { font-size: 50px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(56,189,248,0.4)); }
-        h2 { color: #fff; font-size: 26px; font-weight: 900; margin-bottom: 5px; letter-spacing: -0.5px; }
-        p { color: #94a3b8; font-size: 15px; margin-bottom: 30px; }
-        .nama-user { color: #38bdf8; font-weight: bold; }
-
-        .form-group { text-align: left; margin-bottom: 25px; }
-        label { color: #cbd5e1; font-size: 13px; font-weight: 600; display: block; margin-bottom: 8px; text-transform: uppercase; }
+        /* CUSTOM INPUTS */
+        .custom-input { 
+            background: rgba(15, 23, 42, 0.6) !important; color: white !important; 
+            border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 12px; 
+            transition: 0.3s;
+        }
+        .custom-input:focus { border-color: #38bdf8 !important; box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25) !important; }
         
-        input {
-            width: 100%; background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.1);
-            padding: 15px; color: #fff; font-size: 18px; font-weight: bold; border-radius: 12px;
-            outline: none; transition: 0.3s; text-align: center;
+        .readonly-input { 
+            background: rgba(56, 189, 248, 0.1) !important; color: #38bdf8 !important; 
+            border: 1px dashed rgba(56, 189, 248, 0.4) !important; 
+            font-weight: 800; text-align: center; letter-spacing: 1px;
         }
-        input:focus { border-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); background: rgba(15, 23, 42, 0.8); }
 
-        .btn-submit {
-            width: 100%; background: linear-gradient(90deg, #38bdf8, #0ea5e9); color: #0f172a; 
-            padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 800;
-            border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(56,189,248,0.3);
+        /* TYPOGRAPHY & COLORS */
+        .text-accent { color: #38bdf8; }
+        .text-muted-custom { color: #94a3b8; }
+        .icon-glow { filter: drop-shadow(0 0 15px rgba(56,189,248,0.4)); }
+
+        /* BUTTONS */
+        .btn-primary-custom { 
+            background: linear-gradient(90deg, #38bdf8, #0ea5e9); color: #0f172a; 
+            border: none; border-radius: 12px; font-weight: 900; padding: 14px;
+            transition: 0.3s; box-shadow: 0 10px 20px rgba(56,189,248,0.2);
         }
-        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(56,189,248,0.5); filter: brightness(1.1); }
+        .btn-primary-custom:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(56,189,248,0.4); filter: brightness(1.1); }
         
-        .btn-back { display: block; margin-top: 20px; color: #64748b; text-decoration: none; font-size: 14px; transition: 0.3s; font-weight: 600; }
-        .btn-back:hover { color: #fff; }
+        .btn-outline-custom { 
+            background: rgba(255,255,255,0.05); color: #cbd5e1; 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; 
+            font-weight: 600; transition: 0.3s; padding: 12px; display: block; text-align: center; text-decoration: none;
+        }
+        .btn-outline-custom:hover { background: rgba(255,255,255,0.1); color: white; border-color: #f43f5e; }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow"></div>
-    <div class="bg-glow-2"></div>
+<div class="bg-glow"></div>
+<div class="bg-glow-2"></div>
 
-    <div class="card">
-        <div class="icon">⏳</div>
-        <h2>Atur Durasi</h2>
-        <p>Selamat datang kembali, <span class="nama-user" th:text="${user.nama}">Player</span>!</p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="glass-card">
+                <div class="card-body p-5">
+                    
+                    <!-- HEADER -->
+                    <div class="text-center mb-4">
+                        <i class="bi bi-controller text-accent icon-glow" style="font-size: 3.5rem;"></i>
+                        <h3 class="fw-bold mt-2" style="color: white;">Sewa PC <span class="text-accent">Member</span></h3>
+                        <p class="text-muted-custom">Halo, <strong class="text-white" th:text="${user.nama}">Member</strong>! Main dan kumpulkan poinmu.</p>
+                    </div>
 
-        <form action="/proses-durasi" method="POST">
-            <div class="form-group">
-                <label>Input Waktu Bermain (Jam)</label>
-                <input type="number" name="durasi" min="1" max="24" value="1" required>
+                    <form th:action="@{/proses-durasi}" method="post">
+                        
+                        <!-- JENIS PAKET (Terkunci) -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-muted-custom" style="font-size: 12px; text-transform: uppercase;">Jenis Layanan</label>
+                            
+                            <!-- Tampilan visual (readonly) -->
+                            <input type="text" class="form-control form-control-lg readonly-input" value="REGULER (TARIF PER JAM)" readonly>
+                            
+                            <!-- Data asli untuk backend -->
+                            <input type="hidden" name="jenisPaket" value="Reguler">
+                            
+                            <div class="mt-2" style="background: rgba(34, 197, 94, 0.1); border-radius: 8px; padding: 10px;">
+                                <small style="color: #4ade80; font-size: 12px;">
+                                    <i class="bi bi-stars"></i> Khusus Member: Bermain dengan tarif per jam untuk terus mengumpulkan <b>Poin Reward</b>!
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- DURASI MAIN -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-muted-custom" style="font-size: 12px; text-transform: uppercase;">Durasi Main (Jam)</label>
+                            <input type="number" name="durasi" id="durasiMember" class="form-control form-control-lg custom-input" min="1" value="1" required>
+                            <small class="text-muted-custom mt-2 d-block" style="font-size: 12px;"><i class="bi bi-info-circle"></i> Tentukan berapa lama kamu ingin main.</small>
+                        </div>
+
+                        <!-- BUTTONS -->
+                        <div class="mt-5">
+                            <button type="submit" class="btn btn-primary-custom w-100">Lanjut Pilih PC <i class="bi bi-arrow-right ms-2"></i></button>
+                            <a href="/member-dashboard" class="btn btn-outline-custom w-100 mt-3">← Batal & Kembali</a>
+                        </div>
+                        
+                    </form>
+                </div>
             </div>
-            
-            <button type="submit" class="btn-submit">Konfirmasi & Pilih PC</button>
-        </form>
-        
-        <a href="/member-dashboard" class="btn-back">← Kembali ke Dashboard</a>
+        </div>
     </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

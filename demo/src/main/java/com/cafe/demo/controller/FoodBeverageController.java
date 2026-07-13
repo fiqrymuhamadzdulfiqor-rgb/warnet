@@ -3,6 +3,7 @@ package com.cafe.demo.controller;
 import com.cafe.demo.model.MenuFB;
 import com.cafe.demo.model.Pelanggan;
 import com.cafe.demo.model.PesananFB;
+import com.cafe.demo.model.DetailPesananFB;
 import com.cafe.demo.service.MenuFBService;
 import com.cafe.demo.service.PelangganService;
 import com.cafe.demo.service.PesananFBService;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 public class FoodBeverageController {
@@ -24,7 +27,7 @@ public class FoodBeverageController {
     @Autowired
     private PelangganService pelangganService;
 
-    // ================= HALAMAN PESAN MAKANAN (SIAPA PUN BISA AKSES) =================
+    // ================= HALAMAN PESAN MAKANAN =================
     @GetMapping("/pesan-makan")
     public String pesanMakanPage(HttpSession session, Model model) {
         Pelanggan member = (Pelanggan) session.getAttribute("user");
@@ -35,7 +38,6 @@ public class FoodBeverageController {
         } else if (umum != null) {
             model.addAttribute("currentUser", umum);
         } else {
-            // JIKA BELUM LOGIN/RESERVASI (Pelanggan Umum Bebas dari Home)
             Pelanggan anonim = new Pelanggan();
             anonim.setStatus("UMUM");
             anonim.setNama("Guest"); 
@@ -43,55 +45,120 @@ public class FoodBeverageController {
         }
 
         model.addAttribute("daftarMenu", menuFBService.getAllMenu());
-        model.addAttribute("pesanan", new PesananFB());
         return "pesan-makan";
     }
 
+    // ================= PROSES SIMPAN KERANJANG =================
     @PostMapping("/proses-pesan-makan")
     public String prosesPesanMakan(
-            @ModelAttribute PesananFB pesanan,
-            @RequestParam Long menuId,
-            @RequestParam(required = false) String namaManual, // Tangkap input Nama/No PC jika umum
+            @RequestParam(required = false) List<Long> menuIds,
+            @RequestParam(required = false) List<Integer> jumlahs,
+            @RequestParam String metodePembayaran,
+            @RequestParam(required = false) String namaManual,
             HttpSession session,
             Model model) {
 
         Pelanggan member = (Pelanggan) session.getAttribute("user");
         Pelanggan umum = (Pelanggan) session.getAttribute("guestUser");
         
-        Pelanggan pembeli = null;
+        Pelanggan pembeliUntukView = new Pelanggan();
+        PesananFB strukBaru = new PesananFB();
+        strukBaru.setMetodePembayaran(metodePembayaran);
+        strukBaru.setStatusPesanan("Diproses");
 
+        // CEK SIAPA YANG BELI 
         if (member != null) {
-            pembeli = pelangganService.getById(member.getId());
+            pembeliUntukView = pelangganService.getById(member.getId());
+            strukBaru.setPelanggan(pembeliUntukView);
         } else if (umum != null) {
-            pembeli = umum;
+            pembeliUntukView = umum;
+            strukBaru.setPelanggan(umum);
         } else {
-            // JIKA UMUM TANPA SESSION: Otomatis daftarkan data UMUM baru sesuai nomor PC/Nama yang diinput
-            Pelanggan umumBaru = new Pelanggan();
-            umumBaru.setNama(namaManual != null && !namaManual.isEmpty() ? namaManual : "Umum (PC Anonim)");
-            umumBaru.setStatus("UMUM");
-            pembeli = pelangganService.save(umumBaru); // Simpan ke DB agar punya ID relasi
+            strukBaru.setNamaPemesanTamu(namaManual != null && !namaManual.isEmpty() ? namaManual : "Umum (PC Anonim)");
+            pembeliUntukView.setStatus("UMUM");
+            pembeliUntukView.setNama("Guest");
         }
 
-        MenuFB menu = menuFBService.getById(menuId);
-        pesanan.setMenuFb(menu);
-        pesanan.setTotalHargaRupiah(menu.getHargaRupiah() * pesanan.getJumlah());
-        pesanan.setTotalPoinDigunakan(menu.getHargaPoin() * pesanan.getJumlah());
+        // PROSES ISI KERANJANG
+        double totalHarga = 0;
+        int totalPoin = 0;
+        int totalItemDibeli = 0; // Variabel baru untuk melacak jumlah barang
+
+        if (menuIds != null && jumlahs != null) {
+            for (int i = 0; i < menuIds.size(); i++) {
+                MenuFB menu = menuFBService.getById(menuIds.get(i));
+                int qty = jumlahs.get(i);
+
+                if (menu != null && qty > 0) {
+                    DetailPesananFB detail = new DetailPesananFB();
+                    detail.setMenuFb(menu);
+                    detail.setJumlah(qty);
+                    detail.setSubTotalRupiah(menu.getHargaRupiah() * qty);
+                    detail.setSubTotalPoin(menu.getHargaPoin() * qty);
+
+                    strukBaru.tambahDetail(detail);
+
+                    totalHarga += detail.getSubTotalRupiah();
+                    totalPoin += detail.getSubTotalPoin();
+                    totalItemDibeli += qty; // Hitung total porsi yang masuk keranjang
+                }
+            }
+        }
+
+        // ========================================================
+        // 🛡️ 3 LAPIS VALIDASI KEAMANAN (Mencegah Bug Rp 0)
+        // ========================================================
+        
+        // Validasi 1: Cegah Keranjang Kosong
+        if (totalItemDibeli == 0) {
+            model.addAttribute("errorPoin", "Keranjang masih kosong! Silakan pilih makanan minimal 1.");
+            model.addAttribute("daftarMenu", menuFBService.getAllMenu());
+            model.addAttribute("currentUser", pembeliUntukView);
+            return "pesan-makan";
+        }
+
+        // Validasi 2: Cegah Tamu Umum menggunakan metode Tukar Poin
+        if ("Tukar Poin".equalsIgnoreCase(metodePembayaran) && member == null) {
+            model.addAttribute("errorPoin", "Maaf, fitur Tukar Poin khusus untuk Member Aktif!");
+            model.addAttribute("daftarMenu", menuFBService.getAllMenu());
+            model.addAttribute("currentUser", pembeliUntukView);
+            return "pesan-makan";
+        }
+
+        // Validasi 3: Cegah Member menukar poin jika saldonya kurang
+        if ("Tukar Poin".equalsIgnoreCase(metodePembayaran) && member != null) {
+            if (pembeliUntukView.getPoint() < totalPoin) {
+                model.addAttribute("errorPoin", "Poin Anda tidak cukup! Total butuh: " + totalPoin + " PTS.");
+                model.addAttribute("daftarMenu", menuFBService.getAllMenu());
+                model.addAttribute("currentUser", pembeliUntukView);
+                return "pesan-makan";
+            } else {
+                // Potong saldo poinnya langsung di sini
+                pembeliUntukView.setPoint(pembeliUntukView.getPoint() - totalPoin);
+                pelangganService.save(pembeliUntukView);
+            }
+        }
+        // ========================================================
+
+        strukBaru.setTotalHargaRupiah(totalHarga);
+        strukBaru.setTotalPoinDigunakan(totalPoin);
 
         try {
-            pesananFBService.prosesPesanan(pesanan, pembeli);
+            pesananFBService.prosesPesanan(strukBaru);
             
             if (member != null) {
-                session.setAttribute("user", pelangganService.getById(member.getId()));
                 return "redirect:/member-dashboard";
             }
-            
-            // Jika umum, lempar ke halaman depan dengan status sukses jajan
             return "redirect:/?suksesMakan"; 
             
-        } catch (RuntimeException e) {
-            model.addAttribute("currentUser", pembeli);
+        } catch (Exception e) { 
+            System.out.println("=========== ERROR DATABASE KASIR ===========");
+            e.printStackTrace();
+            System.out.println("============================================");
+            
+            model.addAttribute("errorPoin", "Sistem Error: " + e.getMessage());
             model.addAttribute("daftarMenu", menuFBService.getAllMenu());
-            model.addAttribute("errorPoin", e.getMessage());
+            model.addAttribute("currentUser", pembeliUntukView);
             return "pesan-makan";
         }
     }
@@ -100,19 +167,17 @@ public class FoodBeverageController {
     @GetMapping("/admin/kelola-menu")
     public String kelolaMenuPage(HttpSession session, Model model) {
         Boolean login = (Boolean) session.getAttribute("adminLogin");
-        if (login == null || !login) {
-            return "redirect:/login";
-        }
+        if (login == null || !login) return "redirect:/login";
 
         model.addAttribute("menuBaru", new MenuFB());
         model.addAttribute("daftarMenu", menuFBService.getAllMenu());
         return "admin-menu-fb";
     }
 
-    @PostMapping("/admin/save-menu")
+    @PostMapping("/admin/simpan-menu-fb")
     public String saveMenuFB(@ModelAttribute MenuFB menu) {
         menuFBService.save(menu);
-        return "redirect:/admin/kelola-menu";
+        return "redirect:/admin/kelola-menu"; 
     }
 
     @GetMapping("/admin/delete-menu/{id}")
@@ -125,11 +190,8 @@ public class FoodBeverageController {
     @GetMapping("/admin/pesanan-fb")
     public String daftarPesananFB(HttpSession session, Model model) {
         Boolean login = (Boolean) session.getAttribute("adminLogin");
-        if (login == null || !login) {
-            return "redirect:/login";
-        }
+        if (login == null || !login) return "redirect:/login";
 
-        // Kirim semua data pesanan ke halaman admin
         model.addAttribute("daftarPesanan", pesananFBService.getAll());
         return "admin-pesanan-fb";
     }
@@ -137,16 +199,13 @@ public class FoodBeverageController {
     @GetMapping("/admin/selesaikan-pesanan-fb/{id}")
     public String selesaikanPesananFB(@PathVariable Long id, HttpSession session) {
         Boolean login = (Boolean) session.getAttribute("adminLogin");
-        if (login == null || !login) {
-            return "redirect:/login";
-        }
+        if (login == null || !login) return "redirect:/login";
 
         PesananFB pesanan = pesananFBService.getById(id);
         if(pesanan != null) {
-            pesanan.setStatusPesanan("Selesai"); // Ubah status pesanan
+            pesanan.setStatusPesanan("Selesai");
             pesananFBService.save(pesanan);
         }
-        
         return "redirect:/admin/pesanan-fb";
     }
 }

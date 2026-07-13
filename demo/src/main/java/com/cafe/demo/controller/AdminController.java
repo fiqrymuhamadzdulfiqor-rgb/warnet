@@ -1,11 +1,11 @@
 package com.cafe.demo.controller;
 
 import com.cafe.demo.model.Komputer;
-import com.cafe.demo.model.Pelanggan;
+import com.cafe.demo.model.Reservasi;
 import com.cafe.demo.service.KomputerService;
 import com.cafe.demo.service.PelangganService;
 import com.cafe.demo.service.PembayaranService;
-import com.cafe.demo.service.TransaksiService;
+import com.cafe.demo.service.ReservasiService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 public class AdminController {
@@ -23,8 +26,9 @@ public class AdminController {
     @Autowired
     private KomputerService komputerService;
 
+    // KITA SUDAH FULL MIGRASI MENGGUNAKAN RESERVASI SERVICE
     @Autowired
-    private TransaksiService transaksiService;
+    private ReservasiService reservasiService;
 
     @Autowired
     private PembayaranService pembayaranService;
@@ -37,9 +41,9 @@ public class AdminController {
             return "redirect:/login";
         }
 
-        // Hitung data real-time untuk Dashboard
-        double totalPendapatan = transaksiService.getAll().stream()
-                .mapToDouble(transaksi -> transaksi.getTotal())
+        // Hitung data real-time untuk Dashboard (Menggunakan model Reservasi)
+        double totalPendapatan = reservasiService.getAll().stream()
+                .mapToDouble(reservasi -> reservasi.getTotalHarga())
                 .sum();
 
         long pcAktif = komputerService.getAll().stream()
@@ -103,12 +107,30 @@ public class AdminController {
     }
 
     // --- FITUR BARU: AKHIRI SESI (STOP BILLING) ---
+    // --- FITUR BARU: AKHIRI SESI (STOP BILLING) ---
     @GetMapping("/akhiri-sesi/{id}")
     public String akhiriSesi(@PathVariable Long id) {
         Komputer komputer = komputerService.getById(id);
         if (komputer != null) {
-            komputer.setStatus("Tersedia"); // Kembalikan status komputer menjadi kosong/tersedia
+            // 1. Ubah status komputer menjadi kosong/tersedia
+            komputer.setStatus("Tersedia"); 
             komputerService.save(komputer);
+
+            // 2. BANTAI SEMUA tiket "Aktif" yang nyangkut di PC ini!
+            List<Reservasi> daftarReservasi = reservasiService.getAll();
+            for (Reservasi r : daftarReservasi) {
+                if (r.getKomputer() != null 
+                    && r.getKomputer().getId().equals(komputer.getId()) 
+                    && "Aktif".equalsIgnoreCase(r.getStatusBermain())) {
+                    
+                    r.setStatusBermain("Selesai"); 
+                    r.setWaktuSelesai(LocalDateTime.now()); 
+                    reservasiService.save(r);
+                    
+                    // KITA HAPUS PERINTAH "break;" DI SINI! 
+                    // Biarkan sistem terus mencari dan mematikan semua tiket gaib yang nyangkut.
+                }
+            }
         }
         return "redirect:/komputer-page";
     }
@@ -116,7 +138,8 @@ public class AdminController {
     // ================= TRANSAKSI =================
     @GetMapping("/transaksi-page")
     public String transaksiPage(Model model) {
-        model.addAttribute("transaksiList", transaksiService.getAll());
+        // Halaman ini sekarang juga akan mengambil data dari tabel Reservasi
+        model.addAttribute("transaksiList", reservasiService.getAll());
         return "transaksi";
     }
 }
