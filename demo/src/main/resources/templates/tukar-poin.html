@@ -1,183 +1,239 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Tukar Poin - CyberNet</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Tukar Poin Reward - NexaNet Cafe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:'Inter',sans-serif;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            min-height: 100vh;
+            background: #0f172a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        body{
-            min-height:100vh;
-            background: radial-gradient(circle at top,#1e293b,#0f172a);
-            color:white;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            padding: 20px;
-        }
+        /* Animated Background Glow */
+        .bg-glow { position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 8s infinite alternate; }
+        .bg-glow-2 { position: fixed; bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); z-index: -1; filter: blur(60px); animation: pulse 6s infinite alternate-reverse; }
+        @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
 
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 900px;
+            z-index: 10;
+            animation: slideUp 0.6s ease-out;
         }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h2 {
-            color: #38bdf8;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h2 { color: white; font-size: 32px; font-weight: 900; margin-bottom: 15px; letter-spacing: 1px; }
+        .header h2 i { color: #facc15; text-shadow: 0 0 15px rgba(250, 204, 21, 0.5); }
+        
         .poin-badge {
             display: inline-block;
-            background: rgba(56, 189, 248, 0.2);
-            color: #38bdf8;
-            padding: 10px 20px;
+            background: rgba(250, 204, 21, 0.1);
+            color: #fef08a;
+            padding: 12px 25px;
             border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
-            border: 1px solid #38bdf8;
+            font-size: 16px;
+            font-weight: 600;
+            border: 1px dashed rgba(250, 204, 21, 0.4);
+            box-shadow: 0 10px 20px rgba(250, 204, 21, 0.1);
         }
+        .poin-badge span { font-size: 22px; font-weight: 900; color: #facc15; margin-left: 5px; }
 
-        /* Pesan Error jika poin tidak cukup */
-        .error-msg {
-            background: rgba(239, 68, 68, 0.2);
-            color: #f87171;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-            border: 1px solid #ef4444;
-        }
+        .error-msg { background: rgba(239, 68, 68, 0.15); color: #f87171; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 25px; border: 1px solid rgba(239, 68, 68, 0.3); font-weight: 600; }
 
-        .grid-hadiah {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
+        .grid-hadiah { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
 
         .card-hadiah {
-            background: rgba(30,41,59,0.7);
-            padding: 20px;
-            border-radius: 15px;
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 30px 20px;
+            border-radius: 20px;
             text-align: center;
-            border: 1px solid #334155;
-            transition: transform 0.2s;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
         }
+        .card-hadiah:hover { transform: translateY(-5px); border-color: rgba(56,189,248,0.4); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
 
-        .card-hadiah:hover {
-            transform: translateY(-5px);
-            border-color: #38bdf8;
-        }
+        .icon-hadiah { font-size: 45px; color: #38bdf8; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(56,189,248,0.3)); transition: 0.3s; }
+        .card-hadiah:hover .icon-hadiah { transform: scale(1.1); color: white; }
 
-        .card-hadiah h3 {
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
+        .card-hadiah h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; color: white; }
+        .card-hadiah p { color: #94a3b8; margin-bottom: 20px; font-size: 13px; line-height: 1.5; padding: 0 10px; }
 
-        .card-hadiah p {
-            color: #94a3b8;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        .card-hadiah .harga {
-            font-size: 20px;
-            font-weight: bold;
-            color: #facc15; /* Warna kuning emas */
-            margin-bottom: 20px;
-        }
+        .harga { font-size: 24px; font-weight: 900; color: #facc15; margin-bottom: 20px; text-shadow: 0 0 15px rgba(250, 204, 21, 0.2); }
 
         button.btn-tukar {
             width: 100%;
-            padding: 10px;
+            padding: 14px;
             border: none;
-            border-radius: 8px;
-            background: #38bdf8;
-            color: black;
-            font-weight: bold;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+            color: #0f172a;
+            font-weight: 900;
+            font-size: 14px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(56,189,248,0.2);
         }
-
-        button.btn-tukar:hover {
-            background: #0284c7;
-            color: white;
-        }
+        button.btn-tukar:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(56,189,248,0.4); filter: brightness(1.1); }
 
         .btn-kembali {
-            display: block;
-            text-align: center;
-            margin-top: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            width: 100%;
+            margin-top: 40px;
             color: #94a3b8;
             text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
         }
+        .btn-kembali:hover { color: white; }
 
-        .btn-kembali:hover {
-            color: white;
+        /* ========================================= */
+        /* CSS UNTUK POP-UP MODAL SUKSES (BARU)      */
+        /* ========================================= */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(15px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; animation: fadeIn 0.3s ease-out;
         }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .modal-card {
+            background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(74, 222, 128, 0.4);
+            border-radius: 24px; padding: 40px 30px; text-align: center; max-width: 450px; width: 90%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 40px rgba(74, 222, 128, 0.15);
+            animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .modal-icon { font-size: 70px; color: #4ade80; margin-bottom: 10px; filter: drop-shadow(0 0 20px rgba(74, 222, 128, 0.5)); }
+        .modal-title { font-size: 26px; font-weight: 900; color: white; margin-bottom: 15px; }
+        .modal-text { color: #cbd5e1; font-size: 14px; line-height: 1.6; margin-bottom: 25px; }
+        
+        .modal-highlight { 
+            display: block; margin: 15px 0; padding: 15px; background: rgba(250, 204, 21, 0.15); 
+            border-radius: 12px; border: 1px dashed #facc15; color: #facc15; font-weight: 900; font-size: 15px; letter-spacing: 0.5px; 
+            animation: blinkHighlight 2s infinite;
+        }
+        @keyframes blinkHighlight { 0%, 100% { border-color: #facc15; } 50% { border-color: transparent; } }
+        
+        .btn-modal-close { 
+            display: inline-block; background: linear-gradient(90deg, #4ade80, #22c55e); color: #064e3b; 
+            padding: 14px; border-radius: 12px; font-weight: 900; text-decoration: none; border: none; 
+            cursor: pointer; transition: 0.3s; width: 100%; font-size: 15px; box-shadow: 0 10px 20px rgba(74, 222, 128, 0.3);
+        }
+        .btn-modal-close:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(74, 222, 128, 0.5); filter: brightness(1.1); }
     </style>
 </head>
 <body>
 
+<!-- POP-UP MODAL SUKSES -->
+<!-- Modal ini hanya muncul jika URL mengandung ?sukses -->
+<div th:if="${param.sukses}" id="successModal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-icon"><i class="bi bi-check-circle-fill"></i></div>
+        <div class="modal-title">Penukaran Berhasil!</div>
+        <div class="modal-text">
+            Poin Anda telah berhasil dipotong oleh sistem.
+            <span class="modal-highlight">
+                <i class="bi bi-exclamation-triangle-fill"></i> JANGAN TUTUP LAYAR INI!
+            </span>
+            Silakan tunjukkan layar ini kepada Admin/Kasir yang bertugas sekarang juga untuk mengambil barang Anda.
+        </div>
+        <button onclick="kembaliKeDashboard()" class="btn-modal-close">Barang Sudah Saya Terima</button>
+    </div>
+</div>
+
+<div class="bg-glow"></div>
+<div class="bg-glow-2"></div>
+
 <div class="container">
     
     <div class="header">
-        <h2>🎁 Tukar Poin Reward</h2>
+        <h2><i class="bi bi-gift-fill"></i> Tukar Poin Gaming</h2>
+        <p style="color: #94a3b8; margin-bottom: 20px;">Tukarkan poinmu dengan peralatan tempur eksklusif!</p>
         <div class="poin-badge">
-            Sisa Poin: <span th:text="${user.point}">0</span> PTS
+            Sisa Poin Anda: <span th:text="${user.point != null ? user.point : 0}">0</span> PTS
         </div>
     </div>
 
+    <!-- Menampilkan pesan error jika poin kurang -->
     <div th:if="${error}" class="error-msg">
-        <b th:text="${error}"></b>
+        <i class="bi bi-exclamation-triangle-fill"></i> <b th:text="${error}"></b>
     </div>
 
     <div class="grid-hadiah">
         
+        <!-- ITEM 1: HEADSET GAMING -->
         <div class="card-hadiah">
             <form action="/proses-tukar-poin" method="post">
-                <h3>Es Teh Manis</h3>
-                <p>Segarkan harimu saat push rank!</p>
-                <div class="harga">20 PTS</div>
+                <div class="icon-hadiah"><i class="bi bi-headset"></i></div>
+                <h3>Headset Gaming 7.1</h3>
+                <p>Dengarkan langkah kaki musuh lebih presisi dengan audio surround.</p>
+                <div class="harga">500 PTS</div>
                 
-                <input type="hidden" name="hadiah" value="Es Teh Manis">
-                <input type="hidden" name="hargaPoin" value="20">
+                <input type="hidden" name="hadiah" value="Headset Gaming 7.1">
+                <input type="hidden" name="hargaPoin" value="500">
                 
                 <button type="submit" class="btn-tukar">Tukar Sekarang</button>
             </form>
         </div>
 
+        <!-- ITEM 2: MOUSEPAD GAMING -->
         <div class="card-hadiah">
             <form action="/proses-tukar-poin" method="post">
-                <h3>Indomie Goreng</h3>
-                <p>Penyelamat perut lapar gamer.</p>
-                <div class="harga">50 PTS</div>
+                <div class="icon-hadiah"><i class="bi bi-square-fill"></i></div>
+                <h3>Mousepad Extended</h3>
+                <p>Mousepad gaming anti-slip ukuran 80x30cm edisi khusus NexaNet.</p>
+                <div class="harga">350 PTS</div>
                 
-                <input type="hidden" name="hadiah" value="Indomie Goreng Telur">
-                <input type="hidden" name="hargaPoin" value="50">
+                <input type="hidden" name="hadiah" value="Mousepad Gaming Extended">
+                <input type="hidden" name="hargaPoin" value="350">
                 
                 <button type="submit" class="btn-tukar">Tukar Sekarang</button>
             </form>
         </div>
 
+        <!-- ITEM 3: MOUSE GAMING -->
         <div class="card-hadiah">
             <form action="/proses-tukar-poin" method="post">
-                <h3>Gratis 1 Jam PC</h3>
-                <p>Tambah waktu mainmu gratis!</p>
-                <div class="harga">100 PTS</div>
+                <div class="icon-hadiah"><i class="bi bi-mouse"></i></div>
+                <h3>Mouse Gaming RGB</h3>
+                <p>Tingkatkan akurasi aim-mu dengan mouse gaming DPI tinggi.</p>
+                <div class="harga">750 PTS</div>
                 
-                <input type="hidden" name="hadiah" value="Gratis 1 Jam Main">
-                <input type="hidden" name="hargaPoin" value="100">
+                <input type="hidden" name="hadiah" value="Mouse Gaming RGB">
+                <input type="hidden" name="hargaPoin" value="750">
+                
+                <button type="submit" class="btn-tukar">Tukar Sekarang</button>
+            </form>
+        </div>
+        
+        <!-- ITEM 4: KEYBOARD MECHANICAL -->
+        <div class="card-hadiah">
+            <form action="/proses-tukar-poin" method="post">
+                <div class="icon-hadiah"><i class="bi bi-keyboard"></i></div>
+                <h3>Keyboard Mechanical</h3>
+                <p>Keyboard TKL Blue Switch untuk pengalaman ngetik & main maksimal.</p>
+                <div class="harga">1500 PTS</div>
+                
+                <input type="hidden" name="hadiah" value="Keyboard Mechanical TKL">
+                <input type="hidden" name="hargaPoin" value="1500">
                 
                 <button type="submit" class="btn-tukar">Tukar Sekarang</button>
             </form>
@@ -185,9 +241,20 @@
 
     </div>
 
-    <a href="/member-dashboard" class="btn-kembali">← Kembali ke Dashboard</a>
+    <a href="/member-dashboard" class="btn-kembali"><i class="bi bi-arrow-left"></i> Kembali ke Dashboard</a>
 
 </div>
+
+<!-- SCRIPT UNTUK MENUTUP POP-UP MODAL -->
+<script>
+    function kembaliKeDashboard() {
+        // Menyembunyikan modal
+        document.getElementById('successModal').style.display = 'none';
+        
+        // Memaksa pengguna kembali ke dashboard agar tidak me-refresh dan melihat alert dua kali
+        window.location.href = '/member-dashboard';
+    }
+</script>
 
 </body>
 </html>

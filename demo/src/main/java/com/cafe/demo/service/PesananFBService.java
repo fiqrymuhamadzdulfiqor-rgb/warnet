@@ -67,4 +67,9 @@ public class PesananFBService {
         // semua daftar makanan (DetailPesananFB) akan otomatis ikut tersimpan!
         return pesananFBRepository.save(pesanan);
     }
+
+    // Tambahkan method ini di dalam class PesananFBService
+    public List<PesananFB> getRiwayatOlehMember(Long pelangganId) {
+        return pesananFBRepository.findByPelangganIdOrderByTanggalPesananDesc(pelangganId);
+    }
 }

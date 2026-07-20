@@ -5,6 +5,7 @@ import com.cafe.demo.model.Pelanggan;
 import com.cafe.demo.model.Reservasi;
 import com.cafe.demo.service.KomputerService;
 import com.cafe.demo.service.PelangganService;
+import com.cafe.demo.service.PesananFBService;
 import com.cafe.demo.service.ReservasiService;
 
 import jakarta.servlet.http.HttpSession;
@@ -30,6 +31,9 @@ public class HomeController {
     // KITA SEKARANG MENGGUNAKAN RESERVASI SERVICE YANG BARU
     @Autowired
     private ReservasiService reservasiService;
+
+    @Autowired
+    private PesananFBService pesananFBService;
 
     // ================= HOME & FASILITAS =================
 
@@ -147,7 +151,7 @@ public class HomeController {
         Pelanggan user = pelangganService.getById(userSession.getId());
         model.addAttribute("user", user);
 
-        // 3. PERBAIKAN BARIS 145 & 150: Simpan ID ke dalam variabel final agar Java tidak protes
+        // 3. Simpan ID ke dalam variabel final agar Java tidak protes
         final Long userId = user.getId(); 
 
         // 4. Ambil riwayat billing PC (MENGGUNAKAN RESERVASI)
@@ -162,6 +166,11 @@ public class HomeController {
                 .filter(r -> "Aktif".equalsIgnoreCase(r.getStatusBermain()))
                 .findFirst().orElse(null);
         model.addAttribute("transaksiAktif", transaksiAktif);
+
+        // =========================================================
+        // 5. TAMBAHAN BARU: Ambil riwayat pesanan F&B
+        // =========================================================
+        model.addAttribute("riwayatMakan", pesananFBService.getRiwayatOlehMember(userId));
 
         return "member-dashboard";
     }
@@ -334,7 +343,10 @@ public class HomeController {
             user.setPoint(user.getPoint() - hargaPoin);
             pelangganService.save(user); 
             session.setAttribute("user", user); 
-            return "redirect:/member-dashboard?sukses=tukar"; 
+            
+            // 👇 INI BARIS YANG DIUBAH 👇
+            return "redirect:/tukar-poin?sukses"; 
+            
         } else {
             model.addAttribute("error", "Maaf, poin kamu tidak cukup!");
             model.addAttribute("user", user);

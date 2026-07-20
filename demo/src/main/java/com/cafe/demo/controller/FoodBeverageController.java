@@ -82,7 +82,7 @@ public class FoodBeverageController {
         // PROSES ISI KERANJANG
         double totalHarga = 0;
         int totalPoin = 0;
-        int totalItemDibeli = 0; // Variabel baru untuk melacak jumlah barang
+        int totalItemDibeli = 0;
 
         if (menuIds != null && jumlahs != null) {
             for (int i = 0; i < menuIds.size(); i++) {
@@ -100,16 +100,14 @@ public class FoodBeverageController {
 
                     totalHarga += detail.getSubTotalRupiah();
                     totalPoin += detail.getSubTotalPoin();
-                    totalItemDibeli += qty; // Hitung total porsi yang masuk keranjang
+                    totalItemDibeli += qty; 
                 }
             }
         }
 
         // ========================================================
-        // 🛡️ 3 LAPIS VALIDASI KEAMANAN (Mencegah Bug Rp 0)
+        // 🛡️ 3 LAPIS VALIDASI KEAMANAN
         // ========================================================
-        
-        // Validasi 1: Cegah Keranjang Kosong
         if (totalItemDibeli == 0) {
             model.addAttribute("errorPoin", "Keranjang masih kosong! Silakan pilih makanan minimal 1.");
             model.addAttribute("daftarMenu", menuFBService.getAllMenu());
@@ -117,7 +115,6 @@ public class FoodBeverageController {
             return "pesan-makan";
         }
 
-        // Validasi 2: Cegah Tamu Umum menggunakan metode Tukar Poin
         if ("Tukar Poin".equalsIgnoreCase(metodePembayaran) && member == null) {
             model.addAttribute("errorPoin", "Maaf, fitur Tukar Poin khusus untuk Member Aktif!");
             model.addAttribute("daftarMenu", menuFBService.getAllMenu());
@@ -125,18 +122,13 @@ public class FoodBeverageController {
             return "pesan-makan";
         }
 
-        // Validasi 3: Cegah Member menukar poin jika saldonya kurang
         if ("Tukar Poin".equalsIgnoreCase(metodePembayaran) && member != null) {
             if (pembeliUntukView.getPoint() < totalPoin) {
                 model.addAttribute("errorPoin", "Poin Anda tidak cukup! Total butuh: " + totalPoin + " PTS.");
                 model.addAttribute("daftarMenu", menuFBService.getAllMenu());
                 model.addAttribute("currentUser", pembeliUntukView);
                 return "pesan-makan";
-            } else {
-                // Potong saldo poinnya langsung di sini
-                pembeliUntukView.setPoint(pembeliUntukView.getPoint() - totalPoin);
-                pelangganService.save(pembeliUntukView);
-            }
+            } 
         }
         // ========================================================
 
@@ -146,10 +138,11 @@ public class FoodBeverageController {
         try {
             pesananFBService.prosesPesanan(strukBaru);
             
+            // 🚀 LOGIKA REDIRECT YANG BENAR
             if (member != null) {
-                return "redirect:/member-dashboard";
+                return "redirect:/member-dashboard"; // Member ke dashboard
             }
-            return "redirect:/?suksesMakan"; 
+            return "redirect:/nota-makanan/" + strukBaru.getId(); // Tamu Umum ke halaman Nota
             
         } catch (Exception e) { 
             System.out.println("=========== ERROR DATABASE KASIR ===========");
@@ -161,6 +154,18 @@ public class FoodBeverageController {
             model.addAttribute("currentUser", pembeliUntukView);
             return "pesan-makan";
         }
+    }
+
+    // ================= HALAMAN NOTA (BARU) =================
+    @GetMapping("/nota-makanan/{id}")
+    public String halamanNotaMakanan(@PathVariable Long id, Model model) {
+        PesananFB pesanan = pesananFBService.getById(id);
+        if (pesanan == null) {
+            return "redirect:/"; // Jika ID tidak ditemukan, kembalikan ke home
+        }
+        
+        model.addAttribute("nota", pesanan);
+        return "nota-makanan"; // Memanggil file nota-makanan.html yang sudah kita buat
     }
 
     // ================= KELOLA MENU F&B (ADMIN) =================
